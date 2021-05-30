@@ -1,0 +1,10 @@
+infile:
+    name: /Users/fgrosa/cernbox/alice_work/trains/GPMCpp13TeV/2018/2977/AnalysisResults_ChTrigger_bBDTtest.root
+    dir: PWGHF_D2H_CharmTrigger__Background
+
+outfile:
+    name: outputs/trigger/2ProngTrigger.root
+
+cuts:
+    2prong:
+        ptmin: 0
