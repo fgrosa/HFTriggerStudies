@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+
+# data files
+*.root
+*.parquet.gzip
+
+# pdf
+*.pdf
+
+# ML models
+*.model
+*.pickle
+*.pkl
+

@@ -1,0 +1,40 @@
+infile:
+    name: ~/cernbox/ALICE_WORK/Files/Trains/Run2/LHC20f4/a/AnalysisResults_ChTrigger_bBDTtest.root
+    dir: PWGHF_D2H_CharmTrigger__Bmeson_Signal
+
+channels:
+    Dzero:
+        enable: True
+        vars: [] #empty list or null to keep all
+        gen: tree # tree or histo
+    Dplus:
+        enable: False
+        vars: []
+        gen: tree # tree or histo
+    Ds:
+        enable: False
+        vars: []
+        gen: tree # tree or histo
+    Lc:
+        enable: False
+        vars: []
+        gen: tree # tree or histo
+    Bplus:
+        enable: False
+        vars: []
+        gen: tree # tree or histo
+    Bzero:
+        enable: False
+        vars: []
+        gen: tree # tree or histo
+    Bs:
+        enable: False
+        vars: []
+        gen: tree # tree or histo
+    Lb:
+        enable: False
+        vars: []
+        gen: tree # tree or histo
+
+outfiles:
+    dir: outputs/LHC20f4/a
