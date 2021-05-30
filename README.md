@@ -1,2 +1,2 @@
 # HFTriggerStudies
-Repository for HF studies
+Repository for studies of HF triggers
