@@ -1,6 +1,6 @@
 infile:
-    name: /Users/fgrosa/cernbox/alice_work/trains/GPMCpp13TeV/2018/2977/AnalysisResults_ChTrigger_bBDTtest.root
-    dir: PWGHF_D2H_CharmTrigger__Background
+    name: inputs/AnalysisResults_LHC18h4_CharmHadrons.root
+    dir: PWGHF_D2H_CharmTrigger_GenPurpose
 
 outfile:
     name: outputs/trigger/2ProngTrigger.root
