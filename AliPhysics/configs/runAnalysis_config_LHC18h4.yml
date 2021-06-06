@@ -1,0 +1,40 @@
+runtype: grid #local, test, grid
+pathtolocalAOD: 'AODfiles/LHC18h4'
+system: pp
+datadir: /alice/sim/2018/LHC18h4
+datapattern: AOD235
+gridworkdir: CharmTriggerGenPurpose
+splitmaxinputfilenum: 50
+AliPhysicVersion: vAN-20210603_ROOT6-1
+runs: [ 288619, 288640, 288642, 288644, 288650, 288687, 288689, 288690, 288743, 288748, 288750, 288804, 288806, 288861, 288862, 288863, 288864, 288868,
+        288902, 288903, 288908, 288909, 288897, 288943, 289165, 289166, 289167, 289169, 289172, 289175, 289176, 289177, 289198, 289199, 289200, 289201]
+
+improverfiles:
+    currentresol: $ALICE_PHYSICS/PWGHF/vertexingHF/upgrade/ITSgraphs_Current.root
+    upgraderesol: $ALICE_PHYSICS/PWGHF/vertexingHF/upgrade/ITSgraphs_NewAll-X0.3-Res4um.root
+
+cuts:
+    applycuts: 1
+    cutfile: /Users/fgrosa/cernbox/alice_work/HFTriggerStudies/AliPhysics/D0DplusDsLcPreselectionCuts_onlyPID.root
+
+taskoptions:
+    writeonlysignal: 0
+    outputObjs:
+      enableGenTree: 0
+      enableGenHistos: 1
+    particles:
+      enableD0: 1
+      enableDplus: 1
+      enableDs: 1
+      enableLc: 1
+      enableDstar: 0
+      enableLc2V0: 0
+      enableBplus: 0
+      enableB0: 0
+      enableBs: 0
+      enableLb: 0
+      enablePions: 0
+      enableKaons: 0
+      enableProtons: 1
+      enableElectrons: 0
+      ptMinTracks: -1.
