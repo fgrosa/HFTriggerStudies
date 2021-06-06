@@ -11,8 +11,6 @@
 #include <TFile.h>
 #include <TDirectoryFile.h>
 
-#include "AliAnalysisTaskSECharmTriggerStudy.h"
-
 #endif
 
 void TriggerHFEvents(std::string cfgFile="config_trigger.yml")
