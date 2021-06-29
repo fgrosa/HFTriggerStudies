@@ -1,0 +1,142 @@
+{
+    "internal-dpl-clock": "",
+    "internal-dpl-aod-reader": {
+        "start-value-enumeration": "0",
+        "end-value-enumeration": "-1",
+        "step-value-enumeration": "1",
+        "aod-file": "@list_of_files.txt"
+    },
+    "hf-tag-sel-collisions": {
+        "fillHistograms": "true",
+        "triggerClassName": "kINT7"
+    },
+    "hf-tag-sel-tracks": {
+        "fillHistograms": "true",
+        "d_bz": "5",
+        "doCutQuality": "true",
+        "d_tpcnclsfound": "71",
+        "pTBinsTrack": {
+            "values": [
+                "0.",
+                "0.5",
+                "1.",
+                "1.5",
+                "2.",
+                "3.",
+                "100."
+            ]
+        },
+        "ptmintrack_2prong": "0.3",
+        "etamax_2prong": "0.8",
+        "cuts_singletrack_2prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        },
+        "ptmintrack_3prong": "0.3",
+        "etamax_3prong": "0.8",
+        "cuts_singletrack_3prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        },
+        "ptMinTrackBach": "0.3",
+        "dcaToPrimXYMaxPtBach": "2",
+        "dcaToPrimXYMinBach": "0",
+        "dcaToPrimXYMaxBach": "1",
+        "etaMaxBach": "0.8"
+    },
+    "hf-track-index-skims-creator": {
+        "fillHistograms": "true",
+        "do3prong": "1",
+        "d_bz": "5",
+        "b_propdca": "true",
+        "useAbsDCA": "true",
+        "d_maxr": "5",
+        "d_maxdzini": "999",
+        "d_minparamchange": "0.001",
+        "d_minrelchi2change": "0.90",
+        "configs": {
+            "mPtD0ToPiKMin": "0",
+            "mInvMassD0ToPiKMin": "1.61",
+            "mInvMassD0ToPiKMax": "2.12",
+            "mCPAD0ToPiKMin": "0.90",
+            "mImpParProductD0ToPiKMax": "0",
+            "mPtJpsiToEEMin": "1000",
+            "mInvMassJpsiToEEMin": "1000",
+            "mInvMassJpsiToEEMax": "1000",
+            "mCPAJpsiToEEMin": "1",
+            "mImpParProductJpsiToEEMax": "-10",
+            "mPtDPlusToPiKPiMin": "0",
+            "mInvMassDPlusToPiKPiMin": "1.67",
+            "mInvMassDPlusToPiKPiMax": "2.07",
+            "mCPADPlusToPiKPiMin": "0.95",
+            "mDecLenDPlusToPiKPiMin": "0.03",
+            "mPtLcToPKPiMin": "0",
+            "mInvMassLcToPKPiMin": "1.98",
+            "mInvMassLcToPKPiMax": "2.58",
+            "mCPALcToPKPiMin": "0.9",
+            "mDecLenLcToPKPiMin": "0",
+            "mPtDsToPiKKMin": "0",
+            "mInvMassDsToPiKKMin": "1.74",
+            "mInvMassDsToPiKKMax": "2.18",
+            "mCPADsToPiKKMin": "0.95",
+            "mDecLenDsToPiKKMin": "0.02",
+            "mPtXicToPKPiMin": "1000",
+            "mInvMassXicToPKPiMin": "1000",
+            "mInvMassXicToPKPiMax": "1000",
+            "mCPAXicToPKPiMin": "1",
+            "mDecLenXicToPKPiMin": "1000"
+        },
+        "b_debug": "false"
+    },
+    "hf-filter": {
+        "pTThreshold2Prong": "5",
+        "pTThreshold3Prong": "5",
+        "deltaMassBPlus": "0.25",
+        "deltaMassB0": "0.25",
+        "deltaMassBs": "0.25",
+        "deltaMassLb": "0.25" ,
+        "pTBinsTrack": {
+            "values": [
+                "0.",
+                "0.5",
+                "1.",
+                "1.5",
+                "2.",
+                "3.",
+                "100."
+            ]
+        },
+        "cutsTrackBeauty3Prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        },
+        "cutsTrackBeauty4Prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        }
+    }
+}

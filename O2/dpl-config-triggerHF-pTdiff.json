@@ -1,0 +1,187 @@
+{
+    "internal-dpl-clock": "",
+    "internal-dpl-aod-reader": {
+        "start-value-enumeration": "0",
+        "end-value-enumeration": "-1",
+        "step-value-enumeration": "1",
+        "aod-file": "@list_of_files.txt"
+    },
+    "hf-tag-sel-collisions": {
+        "fillHistograms": "true",
+        "triggerClassName": "kINT7"
+    },
+    "hf-tag-sel-tracks": {
+        "fillHistograms": "true",
+        "bz": "5.",
+        "doCutQuality": "true",
+        "tpcNClsFound": "71",
+        "pTBinsTrack": {
+            "values": [
+                "0.",
+                "0.5",
+                "1.",
+                "1.5",
+                "2.",
+                "3.",
+                "100."
+            ]
+        },
+        "pTMinTrack2Prong": "0.3",
+        "etaMax2Prong": "0.8",
+        "cutsTrack2Prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        },
+        "pTMinTrack3Prong": "0.3",
+        "etaMax3Prong": "0.8",
+        "cutsTrack3Prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        }
+    },
+    "hf-track-index-skims-creator": {
+        "fillHistograms": "true",
+        "do3prong": "1",
+        "bz": "5.",
+        "propToDCA": "true",
+        "maxRad": "5.",
+        "maxDZIni": "999.",
+        "minParamChange": "0.001",
+        "minRelChi2Change": "0.9",
+
+        "pTBinsD0ToPiK": {
+            "values": [
+                "0.",
+                "5.",
+                "1000."
+            ]
+        },
+        "cutsD0ToPiK": {
+            "values": [
+                ["1.61", "2.12", "0.5", "0.00"],
+                ["1.61", "2.12", "0.5", "0.00"]
+            ]
+        },
+
+        "pTBinsJpsiToEE": {
+            "values": [
+                "0.",
+                "5.",
+                "1000."
+            ]
+        },
+        "cutsJpsiToEE": {
+            "values": [
+                ["2.5", "4.1", "-2.", "1000.00"],
+                ["2.5", "4.1", "-2.", "1000.00"]
+            ]
+        },
+
+        "pTBinsDPlusToPiKPi": {
+            "values": [
+                "0.",
+                "5.",
+                "1000."
+            ]
+        },
+        "cutsDPlusToPiKPi": {
+            "values": [
+                ["1.67", "2.07", "0.95", "0.05"],
+                ["1.67", "2.07", "0.95", "0.05"]
+            ]
+        },
+
+        "pTBinsDSToPiKK": {
+            "values": [
+                "0.",
+                "5.",
+                "1000."
+            ]
+        },
+        "cutsDSToPiKK": {
+            "values": [
+                ["1.74", "2.18", "0.94", "0.02"],
+                ["1.74", "2.18", "0.94", "0.02"]
+            ]
+        },
+
+        "pTBinsLcToPKPi": {
+            "values": [
+                "0.",
+                "5.",
+                "1000."
+            ]
+        },
+        "cutsLcToPKPi": {
+            "values": [
+                ["1.98", "2.58", "-2.", "0.0"],
+                ["1.98", "2.58", "-2.", "0.0"]
+            ]
+        },
+
+        "pTBinsXicToPKPi": {
+            "values": [
+                "1000.",
+                "1000.",
+                "1000."
+            ]
+        },
+        "cutsXicToPKPi": {
+            "values": [
+                ["2.10", "2.80", "-2.", "0.0"],
+                ["2.10", "2.80", "-2.", "0.0"]
+            ]
+        }
+    },
+    "hf-filter": {
+        "pTThreshold2Prong": "5",
+        "pTThreshold3Prong": "5",
+        "deltaMassBPlus": "0.25",
+        "deltaMassB0": "0.25",
+        "deltaMassBs": "0.25",
+        "deltaMassLb": "0.25" ,
+        "pTBinsTrack": {
+            "values": [
+                "0.",
+                "0.5",
+                "1.",
+                "1.5",
+                "2.",
+                "3.",
+                "100."
+            ]
+        },
+        "cutsTrackBeauty3Prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        },
+        "cutsTrackBeauty4Prong": {
+            "values": [
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.002", "1.0"],
+                ["0.000", "10."],
+                ["0.000", "10."]
+            ]
+        }
+    }
+}
