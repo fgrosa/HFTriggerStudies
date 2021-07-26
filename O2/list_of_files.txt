@@ -1,1 +1,1 @@
-AO2D/LHC18h4/288619/001/AO2D.root
+AO2D/alibi_nightlies/O2DPG_pp_minbias_testbeam.sh/25-07-2021-18:00-O2d80a192-ALIDISTb9ef545/AO2D.root

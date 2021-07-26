@@ -38,6 +38,7 @@
 
 # pdf
 *.pdf
+.DS_Store
 
 # ML models
 *.model
