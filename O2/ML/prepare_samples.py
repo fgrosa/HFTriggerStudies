@@ -53,7 +53,7 @@ def divide_df_for_origin(df, cols_to_remove=['fFlagOrigin'], channel=None):
     return df_prompt, df_nonprompt, df_bkg
 
 
-def main(config):
+def main(config): #pylint: disable=too-many-locals
     """
     Main function
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                         help="config file with list of AO2D input files")
     args = parser.parse_args()
 
-    with open(args.config, "r") as yml_cfg:
+    with open(args.config, "r") as yml_cfg: #pylint: disable=unspecified-encoding
         cfg = yaml.load(yml_cfg, yaml.FullLoader)
 
     main(cfg)
