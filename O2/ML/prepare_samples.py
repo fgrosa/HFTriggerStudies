@@ -110,7 +110,7 @@ def main(config): #pylint: disable=too-many-locals
             )
             df_3p_nonprompt.to_parquet(
                 os.path.join(os.path.split(file)[0], f"Nonprompt_{channel_3p}.parquet.gzip"),
-                            compression="gzip"
+                compression="gzip"
             )
             df_3p_bkg.to_parquet(
                 os.path.join(os.path.split(file)[0], f"Bkg_{channel_3p}.parquet.gzip"),
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                         help="config file with list of AO2D input files")
     args = parser.parse_args()
 
-    with open(args.config, "r") as yml_cfg: #pylint: disable=unspecified-encoding
+    with open(args.config, "r") as yml_cfg: #pylint: disable=bad-option-value
         cfg = yaml.load(yml_cfg, yaml.FullLoader)
 
     main(cfg)

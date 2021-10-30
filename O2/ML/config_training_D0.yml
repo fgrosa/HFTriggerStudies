@@ -1,0 +1,14 @@
+data_prep:
+  dir: training_samples/train_14433
+  channel: D0ToKPi  # options: D0ToKPi, DPlusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
+  test_fraction: 0.3
+  seed_split: 42
+
+ml:
+  raw_output: false
+  roc_auc_approach: ovo
+  roc_auc_average: macro
+  hyper_pars: {'max_depth':4, 'learning_rate':0.01, 'n_estimators':1028, 'min_child_weight':5, 'colsample':0.9, 'n_jobs':4, 'tree_method':hist}
+
+output:
+  directory: test
