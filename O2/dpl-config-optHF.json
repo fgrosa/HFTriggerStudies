@@ -54,10 +54,10 @@
         "etaMax2Prong": "0.8",
         "cutsTrack2Prong": {
             "values": [
-                ["0.003", "1.0"],
-                ["0.003", "1.0"],
-                ["0.003", "1.0"],
-                ["0.003", "1.0"],
+                ["0.000", "1.0"],
+                ["0.000", "1.0"],
+                ["0.000", "1.0"],
+                ["0.000", "1.0"],
                 ["0.000", "10."],
                 ["0.000", "10."]
             ]
@@ -66,10 +66,10 @@
         "etaMax3Prong": "0.8",
         "cutsTrack3Prong": {
             "values": [
-                ["0.003", "1.0"],
-                ["0.003", "1.0"],
-                ["0.003", "1.0"],
-                ["0.003", "1.0"],
+                ["0.000", "1.0"],
+                ["0.000", "1.0"],
+                ["0.000", "1.0"],
+                ["0.000", "1.0"],
                 ["0.000", "10."],
                 ["0.000", "10."]
             ]
@@ -87,15 +87,15 @@
 
         "pTBinsD0ToPiK": {
             "values": [
-                "1.",
+                "0.",
                 "5.",
                 "1000."
             ]
         },
         "cutsD0ToPiK": {
             "values": [
-                ["1.7", "2.1", "0.95", "0.00"],
-                ["1.7", "2.1", "0.95", "0.00"]
+                ["1.7", "2.1", "0.6", "1."],
+                ["1.7", "2.1", "0.6", "1."]
             ]
         },
 
@@ -130,104 +130,83 @@
 
         "pTBinsDPlusToPiKPi": {
             "values": [
-                "1.",
+                "0.",
                 "5.",
                 "1000."
             ]
         },
         "cutsDPlusToPiKPi": {
             "values": [
-                ["1.7", "2.", "0.95", "0.05"],
-                ["1.7", "2.", "0.95", "0.05"]
+                ["1.7", "2.", "0.6", "0."],
+                ["1.7", "2.", "0.6", "0."]
             ]
         },
 
         "pTBinsDSToPiKK": {
             "values": [
-                "1.",
+                "0.",
                 "5.",
                 "1000."
             ]
         },
         "cutsDSToPiKK": {
             "values": [
-                ["1.78", "2.18", "0.94", "0.02"],
-                ["1.78", "2.18", "0.94", "0.02"]
+                ["1.78", "2.18", "0.6", "0."],
+                ["1.78", "2.18", "0.6", "0."]
             ]
         },
 
         "pTBinsLcToPKPi": {
             "values": [
-                "1.",
+                "0.",
                 "5.",
                 "1000."
             ]
         },
         "cutsLcToPKPi": {
             "values": [
-                ["1.98", "2.58", "0.8", "0.0"],
-                ["1.98", "2.58", "0.8", "0.0"]
+                ["1.98", "2.58", "0.6", "0.0"],
+                ["1.98", "2.58", "0.6", "0.0"]
             ]
         },
 
         "pTBinsXicToPKPi": {
             "values": [
-                "1000.",
-                "5000.",
-                "10000."
+                "0.",
+                "5.",
+                "1000."
             ]
         },
         "cutsXicToPKPi": {
             "values": [
-                ["0.", "0.", "2.", "1000.0"],
-                ["0.", "0.", "2.", "1000.0"]
+                ["2.26", "2.66", "0.6", "0."],
+                ["2.26", "2.66", "0.6", "0."]
             ]
         }
     },
-    "hf-filter": {
-        "processTraining": "0",
-        "activateQA": "false",
-        "pTThreshold2Prong": "8",
-        "pTThreshold3Prong": "8",
-        "deltaMassBPlus": "0.25",
-        "deltaMassB0": "0.25",
-        "deltaMassBs": "0.25",
-        "deltaMassLb": "0.25",
-        "pTMinBeautyBachelor": "0.3",
-        "pTBinsTrack": {
-            "values": [
-                "0.",
-                "0.5",
-                "1.",
-                "1.5",
-                "2.",
-                "3.",
-                "100."
-            ]
-        },
-        "cutsTrackBeauty3Prong": {
-            "values": [
-                ["0.0025", "1.0"],
-                ["0.0025", "1.0"],
-                ["0.0025", "1.0"],
-                ["0.0025", "1.0"],
-                ["0.000", "10."],
-                ["0.000", "10."]
-            ]
-        },
-        "cutsTrackBeauty4Prong": {
-            "values": [
-                ["0.0025", "1.0"],
-                ["0.0025", "1.0"],
-                ["0.0025", "1.0"],
-                ["0.0025", "1.0"],
-                ["0.000", "10."],
-                ["0.000", "10."]
-            ]
-        },
-        "femtoMaxRelativeMomentum": 0.8,
-        "femtoMinProtonPt": "0.5",
-        "femtoProtonOnlyTOF": "false",
-        "femtoMaxNsigmaProton": "3"
-   }
+    "hf-cand-creator-2prong": {
+        "d_bz": "5",
+        "b_propdca": "true",
+        "d_maxr": "200",
+        "d_maxdzini": "4",
+        "d_minparamchange": "0.001",
+        "d_minrelchi2change": "0.90000000000000002",
+        "b_dovalplots": "true"
+    },
+    "hf-cand-creator-3prong": {
+        "d_bz": "5",
+        "b_propdca": "true",
+        "d_maxr": "200",
+        "d_maxdzini": "4",
+        "d_minparamchange": "0.001",
+        "d_minrelchi2change": "0.90000000000000002",
+        "b_dovalplots": "true"
+    },
+    "hf-cand-creator-2prong-expressions": {
+        "processMC": "false"
+    },
+    "hf-cand-creator-3prong-expressions": {
+        "processMC": "false"
+    },
+    "hf-sel-optimisation": ""
 }

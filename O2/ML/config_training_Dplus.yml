@@ -8,7 +8,20 @@ ml:
   raw_output: false
   roc_auc_approach: ovo
   roc_auc_average: macro
-  hyper_pars: {'max_depth':3, 'learning_rate':0.01, 'n_estimators':1028, 'min_child_weight':5, 'colsample':0.9, 'n_jobs':4, 'tree_method':hist}
+  training_vars: [fDCAPrimXY1, fDCAPrimXY2, fDCAPrimXY3, fDCAPrimZ1, fDCAPrimZ2, fDCAPrimZ3]
+  hyper_pars: {'max_depth':4, 'learning_rate':0.01, 'n_estimators':1000, 'min_child_weight':5, 'n_jobs':4, 'tree_method':hist}
+  hyper_pars_opt:
+    activate: False
+    nfolds: 5
+    initpoints: 10
+    niter: 15
+    njobs: 1
+    hyper_par_ranges: {'max_depth': !!python/tuple [3, 6], 
+                       'learning_rate': !!python/tuple [0.01, 0.1],
+                       'n_estimators': !!python/tuple [300, 1500], 
+                       'min_child_weight': !!python/tuple [1, 10],
+                       'subsample': !!python/tuple [0.8, 1.], 
+                       'colsample_bytree': !!python/tuple [0.8, 1.]}
 
 output:
   directory: test
