@@ -1,5 +1,5 @@
 data_prep:
-  dir: ../AO2D/trains/18370
+  dir: ../AO2D/trains/18622
   channel: D0ToKPi  # options: D0ToKPi, DPlusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
   test_fraction: 0.3
   seed_split: 42
@@ -8,14 +8,13 @@ ml:
   raw_output: false
   roc_auc_approach: ovo
   roc_auc_average: macro
-  training_vars: [fPT1, fDCAPrimXY1, fDCAPrimXY2, fPT2, fDCAPrimZ1, fDCAPrimZ2]
+  training_vars: [fPT1, fDCAPrimXY1, fDCAPrimZ1, fPT2, fDCAPrimXY2, fDCAPrimZ2]
   hyper_pars: {'max_depth':4, 'learning_rate':0.01, 'n_estimators':1000, 'min_child_weight':5, 'n_jobs':4, 'tree_method':hist}
   hyper_pars_opt:
-    activate: True
-    nfolds: 5
-    initpoints: 10
-    niter: 15
+    activate: true
+    ntrials: 25
     njobs: 1
+    timeout: 3000
     hyper_par_ranges: {'max_depth': !!python/tuple [3, 6], 
                        'learning_rate': !!python/tuple [0.01, 0.1],
                        'n_estimators': !!python/tuple [300, 1500], 
@@ -24,4 +23,4 @@ ml:
                        'colsample_bytree': !!python/tuple [0.8, 1.]}
 
 output:
-  directory: test
+  directory: trainings/D0

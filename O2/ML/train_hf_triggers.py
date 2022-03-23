@@ -15,6 +15,7 @@ import yaml
 from hipe4ml import plot_utils
 from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
+from hipe4ml_converter.h4ml_converter import H4MLConverter
 
 
 def get_list_input_files(indir, channel):
@@ -56,7 +57,7 @@ def get_list_input_files(indir, channel):
     return list_prompt, list_nonprompt, list_bkg
 
 
-def data_prep(config): #pylint: disable=too-many-statements, too-many-branches, too-many-locals
+def data_prep(config):  #pylint: disable=too-many-statements, too-many-branches, too-many-locals
     """
     function for data preparation
 
@@ -74,7 +75,8 @@ def data_prep(config): #pylint: disable=too-many-statements, too-many-branches, 
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
 
-    list_prompt, list_nonprompt, list_bkg = get_list_input_files(input_dir, channel)
+    list_prompt, list_nonprompt, list_bkg = get_list_input_files(
+        input_dir, channel)
 
     hdl_prompt = TreeHandler(list_prompt)
     hdl_nonprompt = TreeHandler(list_nonprompt)
@@ -101,7 +103,7 @@ def data_prep(config): #pylint: disable=too-many-statements, too-many-branches, 
     print("\nNumber of available candidates: \n     "
           f"Prompt: {n_prompt}\n     FD: {n_nonprompt}\n     Bkg: {n_bkg}\n")
 
-    n_cand_min = min([n_prompt, n_nonprompt, n_bkg])
+    # n_cand_min = min([n_prompt, n_nonprompt, n_bkg])
     df_tot = pd.concat(
         [df_bkg[:n_prompt],
          df_prompt[:n_prompt],
@@ -137,7 +139,7 @@ def data_prep(config): #pylint: disable=too-many-statements, too-many-branches, 
     return train_test_data
 
 
-def train(config, train_test_data): #pylint: disable=too-many-locals
+def train(config, train_test_data):  #pylint: disable=too-many-locals
     """
     Function for the training
 
@@ -157,14 +159,14 @@ def train(config, train_test_data): #pylint: disable=too-many-locals
 
     # hyperparameters optimization
     if config["ml"]["hyper_pars_opt"]["activate"]:
-        model_hdl.optimize_params_bayes(
+        model_hdl.optimize_params_optuna(
             train_test_data,
             cfg["ml"]["hyper_pars_opt"]["hyper_par_ranges"],
-            "roc_auc_ovo",
-            nfold=cfg['ml']['hyper_pars_opt']['nfolds'],
-            init_points=cfg['ml']['hyper_pars_opt']['initpoints'],
-            n_iter=cfg['ml']['hyper_pars_opt']['niter'],
-            njobs=cfg['ml']['hyper_pars_opt']['njobs']
+            cross_val_scoring="roc_auc_ovo",
+            timeout=cfg['ml']['hyper_pars_opt']['timeout'],
+            n_jobs=cfg['ml']['hyper_pars_opt']['njobs'],
+            n_trials=cfg['ml']['hyper_pars_opt']['ntrials'],
+            direction='maximize'
         )
     else:
         model_hdl.set_model_params(hyper_pars)
@@ -178,9 +180,20 @@ def train(config, train_test_data): #pylint: disable=too-many-locals
         multi_class_opt=config["ml"]["roc_auc_approach"]
     )
 
-    # save model handler in pickle
+    # save model
+    if os.path.isfile(f"{out_dir}/ModelHandler_{channel}.pickle"):
+        os.remove(f"{out_dir}/ModelHandler_{channel}.pickle")
+    if os.path.isfile(f"{out_dir}/ModelHandler_onnx_{channel}.onnx"):
+        os.remove(f"{out_dir}/ModelHandler_onnx_{channel}.onnx")
+    if os.path.isfile(f"{out_dir}/ModelHandler_onnx_hummingbird_{channel}"):
+        os.remove(f"{out_dir}/ModelHandler_onnx_hummingbird_{channel}")
+
     model_hdl.dump_model_handler(f"{out_dir}/ModelHandler_{channel}.pickle")
-    model_hdl.dump_original_model(f"{out_dir}/XGBoostModel_{channel}.model", True)
+    model_conv = H4MLConverter(model_hdl)
+    model_conv.convert_model_onnx(1)
+    model_conv.dump_model_onnx(f"{out_dir}/ModelHandler_onnx_{channel}.onnx")
+    model_conv.convert_model_hummingbird("onnx", 1)
+    model_conv.dump_model_onnx(f"{out_dir}/ModelHandler_onnx_hummingbird_{channel}")
 
     #plots
     leg_labels = ["bkg", "prompt", "nonprompt"]
@@ -243,6 +256,8 @@ def main(config):
     """
     train_test_data = data_prep(config)
     train(config, train_test_data)
+
+    os._exit(0) #pylint: disable=protected-access
 
 
 if __name__ == "__main__":
