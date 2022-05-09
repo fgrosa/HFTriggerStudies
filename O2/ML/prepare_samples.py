@@ -65,9 +65,11 @@ def main(input_dir, max_files=1000, downscale_bkg=1.): #pylint: disable=too-many
     input_files = []
     for subdir in os.listdir(input_dir):
         if os.path.isdir(os.path.join(input_dir, subdir)):
-            for file in os.listdir(os.path.join(input_dir, subdir)):
-                if "AO2D.root" in file:
-                    input_files.append(os.path.join(input_dir, subdir, file))
+            for subsubdir in os.listdir(os.path.join(input_dir, subdir)):
+                if os.path.isdir(os.path.join(input_dir, subdir, subsubdir)):
+                    for file in os.listdir(os.path.join(input_dir, subdir, subsubdir)):
+                        if "AO2D.root" in file:
+                            input_files.append(os.path.join(input_dir, subdir, subsubdir, file))
 
     df_2p, df_3p = None, None
     with alive_bar(len(input_files[:max_files])) as bar_alive:
