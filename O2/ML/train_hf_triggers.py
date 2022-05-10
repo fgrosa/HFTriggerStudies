@@ -44,20 +44,26 @@ def get_list_input_files(indir, channel):
     for subdir in subdirs:
         subdir = os.path.join(indir, subdir)
         if os.path.isdir(subdir):
-            file_prompt = os.path.join(subdir, f"Prompt_{channel}.parquet.gzip")
-            file_nonprompt = os.path.join(subdir, f"Nonprompt_{channel}.parquet.gzip")
-            file_bkg = os.path.join(subdir, f"Bkg_{channel}.parquet.gzip")
-            if os.path.isfile(file_prompt):
-                list_prompt.append(file_prompt)
-            if os.path.isfile(file_nonprompt):
-                list_nonprompt.append(file_nonprompt)
-            if os.path.isfile(file_bkg):
-                list_bkg.append(file_bkg)
+            for subsubdir in os.listdir(subdir):
+                subsubdir = os.path.join(subdir, subsubdir)
+                if os.path.isdir(subsubdir):
+                    file_prompt = os.path.join(
+                        subsubdir, f"Prompt_{channel}.parquet.gzip")
+                    file_nonprompt = os.path.join(
+                        subsubdir, f"Nonprompt_{channel}.parquet.gzip")
+                    file_bkg = os.path.join(
+                        subsubdir, f"Bkg_{channel}.parquet.gzip")
+                    if os.path.isfile(file_prompt):
+                        list_prompt.append(file_prompt)
+                    if os.path.isfile(file_nonprompt):
+                        list_nonprompt.append(file_nonprompt)
+                    if os.path.isfile(file_bkg):
+                        list_bkg.append(file_bkg)
 
     return list_prompt, list_nonprompt, list_bkg
 
 
-def data_prep(config):  #pylint: disable=too-many-statements, too-many-branches, too-many-locals
+def data_prep(config):  # pylint: disable=too-many-statements, too-many-branches, too-many-locals
     """
     function for data preparation
 
@@ -122,14 +128,15 @@ def data_prep(config):  #pylint: disable=too-many-statements, too-many-branches,
     df_list = [df_bkg, df_prompt, df_nonprompt]
     leg_labels = ["bkg", "prompt", "nonprompt"]
 
-    #_____________________________________________
+    # _____________________________________________
     plot_utils.plot_distr(df_list, training_vars, 100, leg_labels,
                           figsize=(12, 7), alpha=0.3, log=True, grid=False, density=True)
-    plt.subplots_adjust(left=0.06, bottom=0.06, right=0.99, top=0.96, hspace=0.55, wspace=0.55)
+    plt.subplots_adjust(left=0.06, bottom=0.06, right=0.99,
+                        top=0.96, hspace=0.55, wspace=0.55)
     plt.savefig(f"{out_dir}/DistributionsAll_{channel}.pdf")
     plt.close("all")
 
-    #_____________________________________________
+    # _____________________________________________
     corr_matrix_fig = plot_utils.plot_corr(df_list, training_vars, leg_labels)
     for fig, lab in zip(corr_matrix_fig, leg_labels):
         plt.figure(fig.number)
@@ -139,7 +146,7 @@ def data_prep(config):  #pylint: disable=too-many-statements, too-many-branches,
     return train_test_data
 
 
-def train(config, train_test_data):  #pylint: disable=too-many-locals
+def train(config, train_test_data):  # pylint: disable=too-many-locals
     """
     Function for the training
 
@@ -193,12 +200,13 @@ def train(config, train_test_data):  #pylint: disable=too-many-locals
     model_conv.convert_model_onnx(1)
     model_conv.dump_model_onnx(f"{out_dir}/ModelHandler_onnx_{channel}.onnx")
     model_conv.convert_model_hummingbird("onnx", 1)
-    model_conv.dump_model_onnx(f"{out_dir}/ModelHandler_onnx_hummingbird_{channel}")
+    model_conv.dump_model_onnx(
+        f"{out_dir}/ModelHandler_onnx_hummingbird_{channel}")
 
-    #plots
+    # plots
     leg_labels = ["bkg", "prompt", "nonprompt"]
 
-    #_____________________________________________
+    # _____________________________________________
     plt.rcParams["figure.figsize"] = (10, 7)
     fig_ml_output = plot_utils.plot_output_train_test(
         model_hdl,
@@ -216,7 +224,7 @@ def train(config, train_test_data):  #pylint: disable=too-many-locals
     else:
         fig_ml_output.savefig(f'{out_dir}/MLOutputDistr_{channel}.pdf')
 
-    #_____________________________________________
+    # _____________________________________________
     plt.rcParams["figure.figsize"] = (10, 9)
     fig_ROC_curve = plot_utils.plot_roc(
         train_test_data[3],
@@ -227,9 +235,10 @@ def train(config, train_test_data):  #pylint: disable=too-many-locals
         config['ml']['roc_auc_approach']
     )
     fig_ROC_curve.savefig(f'{out_dir}/ROCCurveAll_{channel}.pdf')
-    pickle.dump(fig_ROC_curve, open(f'{out_dir}/ROCCurveAll_{channel}.pkl', 'wb'))
+    pickle.dump(fig_ROC_curve, open(
+        f'{out_dir}/ROCCurveAll_{channel}.pkl', 'wb'))
 
-    #_____________________________________________
+    # _____________________________________________
     plt.rcParams["figure.figsize"] = (12, 7)
     fig_feat_importance = plot_utils.plot_feature_imp(
         train_test_data[2][train_test_data[0].columns],
@@ -257,7 +266,7 @@ def main(config):
     train_test_data = data_prep(config)
     train(config, train_test_data)
 
-    os._exit(0) #pylint: disable=protected-access
+    os._exit(0)  # pylint: disable=protected-access
 
 
 if __name__ == "__main__":
@@ -266,7 +275,7 @@ if __name__ == "__main__":
                         help="config file for training")
     args = parser.parse_args()
 
-    with open(args.config, "r") as yml_cfg: #pylint: disable=bad-option-value
+    with open(args.config, "r") as yml_cfg:  # pylint: disable=bad-option-value
         cfg = yaml.load(yml_cfg, yaml.FullLoader)
 
     main(cfg)
