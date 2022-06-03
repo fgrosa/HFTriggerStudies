@@ -1,3 +1,8 @@
-AO2D/LHC18h4/001/AO2D.root
-AO2D/LHC18h4/002/AO2D.root
-AO2D/LHC18h4/003/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/001/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/002/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/003/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/004/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/005/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/006/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/007/AO2D.root
+alien:///alice/sim/2021/LHC21k6/302028/008/AO2D.root
