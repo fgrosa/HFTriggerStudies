@@ -200,7 +200,7 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
     model_conv.convert_model_onnx(1)
     model_conv.dump_model_onnx(f"{out_dir}/ModelHandler_onnx_{channel}.onnx")
     model_conv.convert_model_hummingbird("onnx", 1)
-    model_conv.dump_model_onnx(
+    model_conv.dump_model_hummingbird(
         f"{out_dir}/ModelHandler_onnx_hummingbird_{channel}")
 
     # plots
