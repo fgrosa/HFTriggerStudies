@@ -18,52 +18,46 @@ from hipe4ml.tree_handler import TreeHandler
 from hipe4ml_converter.h4ml_converter import H4MLConverter
 
 
-def get_list_input_files(indir, channel):
+def get_list_input_files(indirs, channel):
     """
     function that returns the list of files
 
     Parameters
     -----------------
-    - indir: input directory
+    - indirs: dictionary with lists of input directories for prompt, nonprompt, and bkg
     - channel: decay channel, options:
         D0ToKPi, DPlusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
 
     Outputs
     -----------------
-    - list_prompt: list of files for prompt
-    - list_nonprompt: list of files for nonprompt
-    - list_bkg: list of files for bkg
+    - file_lists: dictionary with lists of input files for prompt, nonprompt, and bkg
     """
 
     if channel not in ["D0ToKPi", "DplusToPiKPi", "DsToKKPi", "LcToPKPi", "XicToPKPi"]:
         print(f"ERROR: channel {channel} not implemented, return None")
         return None, None, None
 
-    list_prompt, list_nonprompt, list_bkg = [], [], []
-    subdirs = os.listdir(indir)
-    for subdir in subdirs:
-        subdir = os.path.join(indir, subdir)
-        if os.path.isdir(subdir):
-            for subsubdir in os.listdir(subdir):
-                subsubdir = os.path.join(subdir, subsubdir)
-                if os.path.isdir(subsubdir):
-                    file_prompt = os.path.join(
-                        subsubdir, f"Prompt_{channel}.parquet.gzip")
-                    file_nonprompt = os.path.join(
-                        subsubdir, f"Nonprompt_{channel}.parquet.gzip")
-                    file_bkg = os.path.join(
-                        subsubdir, f"Bkg_{channel}.parquet.gzip")
-                    if os.path.isfile(file_prompt):
-                        list_prompt.append(file_prompt)
-                    if os.path.isfile(file_nonprompt):
-                        list_nonprompt.append(file_nonprompt)
-                    if os.path.isfile(file_bkg):
-                        list_bkg.append(file_bkg)
+    file_lists = {}
+    for cand_type in indirs:
+        file_lists[cand_type] = []
+        for indir in indirs[cand_type]:
+            subdirs = os.listdir(indir)
+            for subdir in subdirs:
+                subdir = os.path.join(indir, subdir)
+                if os.path.isdir(subdir):
+                    for subsubdir in os.listdir(subdir):
+                        subsubdir = os.path.join(subdir, subsubdir)
+                        if os.path.isdir(subsubdir):
+                            file_prompt = os.path.join(
+                                subsubdir, f"{cand_type}_{channel}.parquet.gzip")
+                            if os.path.isfile(file_prompt):
+                                file_lists[cand_type].append(file_prompt)
 
-    return list_prompt, list_nonprompt, list_bkg
+    return file_lists
 
 
-def data_prep(config):  # pylint: disable=too-many-statements, too-many-branches, too-many-locals
+# pylint: disable=too-many-statements, too-many-branches, too-many-locals
+def data_prep(config):
     """
     function for data preparation
 
@@ -72,7 +66,7 @@ def data_prep(config):  # pylint: disable=too-many-statements, too-many-branches
     - config: dictionary with config read from a yaml file
     """
 
-    input_dir = config["data_prep"]["dir"]
+    input_dirs = config["data_prep"]["dir"]
     channel = config["data_prep"]["channel"]
     test_f = config["data_prep"]["test_fraction"]
     seed_split = config["data_prep"]["seed_split"]
@@ -81,12 +75,11 @@ def data_prep(config):  # pylint: disable=too-many-statements, too-many-branches
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
 
-    list_prompt, list_nonprompt, list_bkg = get_list_input_files(
-        input_dir, channel)
+    file_lists = get_list_input_files(input_dirs, channel)
 
-    hdl_prompt = TreeHandler(list_prompt)
-    hdl_nonprompt = TreeHandler(list_nonprompt)
-    hdl_bkg = TreeHandler(list_bkg)
+    hdl_prompt = TreeHandler(file_lists["Prompt"])
+    hdl_nonprompt = TreeHandler(file_lists["NonPrompt"])
+    hdl_bkg = TreeHandler(file_lists["Bkg"])
 
     df_prompt = hdl_prompt.get_data_frame()
     df_nonprompt = hdl_nonprompt.get_data_frame()
