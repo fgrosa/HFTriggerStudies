@@ -4,9 +4,11 @@ Script for the download of files from hyperloop
 
 import os
 import argparse
-from ROOT import TGrid #pylint: disable=no-name-in-module
+from ROOT import TGrid  # pylint: disable=no-name-in-module
 
 # main function
+
+
 def main(infile, outpath):
     """
     Main function
@@ -17,7 +19,7 @@ def main(infile, outpath):
     - outpath: output path
     """
 
-    with open(infile) as f_txt: #pylint: disable=unspecified-encoding
+    with open(infile) as f_txt:  # pylint: disable=unspecified-encoding
         contents = f_txt.read()
     list_of_dirs = contents.split(",")
 
