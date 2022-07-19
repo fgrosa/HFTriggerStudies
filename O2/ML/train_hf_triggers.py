@@ -66,7 +66,7 @@ def data_prep(config):
     - config: dictionary with config read from a yaml file
     """
 
-    input_dirs = config["data_prep"]["dir"]
+    input_dirs = config["data_prep"]["dirs"]
     channel = config["data_prep"]["channel"]
     test_f = config["data_prep"]["test_fraction"]
     seed_split = config["data_prep"]["seed_split"]
@@ -102,14 +102,14 @@ def data_prep(config):
     print("\nNumber of available candidates: \n     "
           f"Prompt: {n_prompt}\n     FD: {n_nonprompt}\n     Bkg: {n_bkg}\n")
 
-    # n_cand_min = min([n_prompt, n_nonprompt, n_bkg])
+    n_cand_min = min([n_prompt, n_nonprompt, n_bkg])
     df_tot = pd.concat(
-        [df_bkg[:n_prompt],
-         df_prompt[:n_prompt],
-         df_nonprompt][:n_nonprompt],
+        [df_bkg[:n_cand_min],
+         df_prompt[:n_cand_min],
+         df_nonprompt[:n_cand_min]],
         sort=True
     )
-    labels_array = np.array([0]*n_prompt + [1]*n_prompt + [2]*n_nonprompt)
+    labels_array = np.array([0]*n_cand_min + [1]*n_cand_min + [2]*n_cand_min)
     if test_f < 1:
         train_set, test_set, y_train, y_test = train_test_split(
             df_tot, labels_array, test_size=test_f, random_state=seed_split
