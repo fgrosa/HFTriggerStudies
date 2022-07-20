@@ -2,7 +2,7 @@
 ## Requirements
 In order to execute the code in this folder, the following python libraries are needed:
 - [hipe4ml](https://github.com/hipe4ml/hipe4ml)
-- [hipe4ml](https://github.com/hipe4ml/hipe4ml_converter)
+- [hipe4ml_converter](https://github.com/hipe4ml/hipe4ml_converter)
 - [alive_progress](https://github.com/rsalmei/alive-progress)
 
 ## Main steps
