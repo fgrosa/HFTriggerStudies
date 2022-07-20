@@ -9,9 +9,10 @@ In order to execute the code in this folder, the following python libraries are 
 ### Download training samples from hyperloop
 In order to download the derived `AO2D.root` files produced on [hyperloop](https://alimonitor.cern.ch/hyperloop/), the following script can be used:
 ```python
-python3 download_training_samples.py input_files.txt
+python3 download_training_samples.py input_files.txt output_directory
 ```
 Where the list of input files is provided in the [input_files.txt](https://github.com/fgrosa/HFTriggerStudies/blob/main/O2/ML/input_files.txt). The list of input files can be directly copied from the hyperloop interface from by clicking on the train, `Submitted Jobs` &rarr; `Copy all output directories`
+The `output_directory` instead is the path to an existing directory where to download the `AO2D.root` files.
 
 ### Prepare the samples
 In order to prepare the samples the following script can be used:
