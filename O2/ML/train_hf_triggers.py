@@ -78,7 +78,7 @@ def data_prep(config):
     file_lists = get_list_input_files(input_dirs, channel)
 
     hdl_prompt = TreeHandler(file_lists["Prompt"])
-    hdl_nonprompt = TreeHandler(file_lists["NonPrompt"])
+    hdl_nonprompt = TreeHandler(file_lists["Nonprompt"])
     hdl_bkg = TreeHandler(file_lists["Bkg"])
 
     df_prompt = hdl_prompt.get_data_frame()
