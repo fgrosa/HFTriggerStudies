@@ -1,7 +1,7 @@
 data_prep:
   dirs:
     Prompt: [training_samples/train_29283, training_samples/train_29284]
-    NonPrompt: [training_samples/train_29283, training_samples/train_29284]
+    Nonprompt: [training_samples/train_29283, training_samples/train_29284]
     Bkg: [training_samples/train_29282]
   channel: DplusToPiKPi  # options: D0ToKPi, DplusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
   test_fraction: 0.3
