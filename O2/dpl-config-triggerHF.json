@@ -1,7 +1,7 @@
 {
     "internal-dpl-clock": "",
     "internal-dpl-aod-reader": {
-        "time-limit": "180",
+        "time-limit": "300",
         "orbit-offset-enumeration": "0",
         "orbit-multiplier-enumeration": "0",
         "start-value-enumeration": "0",
@@ -214,15 +214,18 @@
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
         "ccdb-timestamp": "-1",
+        "processRun2": "false",
         "processNoFT0": "true",
-        "processFT0": "false"
+        "processFT0": "false",
+        "processOnlyFT0": "false"
     },
     "tof-pid-full": {
         "param-file": "",
-        "param-sigma": "TOFReso",
+        "param-sigma": "TOFResoParams",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
         "ccdb-timestamp": "-1",
+        "enableTimeDependentResponse": "false",
         "pid-el": "-1",
         "pid-mu": "-1",
         "pid-pi": "-1",
@@ -232,18 +235,19 @@
         "pid-tr": "-1",
         "pid-he": "-1",
         "pid-al": "-1",
-        "processEvTime": "false",
-        "processNoEvTime": "true"
+        "processWSlice": "true",
+        "processWoSlice": "false"
     },
     "tpc-pid-full": {
         "param-file": "",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TPC\/Response",
         "ccdb-timestamp": "-1",
-        "useNetworkCorrection": "0",
-        "downloadNetworkFromAlien": "0",
-        "networkPathAlien": "alien:\/\/\/alice\/cern.ch\/user\/c\/csonnabe\/tpc_network_testing\/net_onnx_0.onnx",
+        "useNetworkCorrection": "false",
+        "autofetchNetworks": "true",
         "networkPathLocally": "network.onnx",
+        "enableNetworkOptimizations": "true",
+        "networkPathCCDB": "Analysis\/PID\/TPC\/ML",
         "pid-el": "-1",
         "pid-mu": "-1",
         "pid-pi": "-1",
@@ -596,14 +600,14 @@
         "fillSignal": "false",
         "fillBackground": "false",
         "donwSampleBkgFactor": "1",
-        "applyML": "false",
+        "applyML": "true",
         "pTBinsBDT": {
             "values": [
                 "0",
                 "1000"
             ]
         },
-        "onnxFileD0ToKPiConf": "XGBoostModel_D0ToKPi.onnx",
+        "onnxFileD0ToKPiConf": "/cvmfs/alice.cern.ch/data/analysis/2022/vAN-20220726/PWGHF/o2/trigger/ModelHandler_onnx_D0ToKPi.onnx",
         "thresholdBDTScoreD0ToKPi": {
             "labels_rows": "",
             "labels_cols": [
@@ -619,7 +623,7 @@
                 ]
             ]
         },
-        "onnxFileDPlusToPiKPiConf": "",
+        "onnxFileDPlusToPiKPiConf": "/cvmfs/alice.cern.ch/data/analysis/2022/vAN-20220726/PWGHF/o2/trigger/ModelHandler_onnx_DplusToPiKPi.onnx",
         "thresholdBDFScoreDPlusToPiKPi": {
             "labels_rows": "",
             "labels_cols": [
@@ -635,7 +639,7 @@
                 ]
             ]
         },
-        "onnxFileDSToPiKKConf": "",
+        "onnxFileDSToPiKKConf": "/cvmfs/alice.cern.ch/data/analysis/2022/vAN-20220726/PWGHF/o2/trigger/ModelHandler_onnx_DsToKKPi.onnx",
         "thresholdBDFScoreDSToPiKK": {
             "labels_rows": "",
             "labels_cols": [
@@ -651,7 +655,7 @@
                 ]
             ]
         },
-        "onnxFileLcToPiKPConf": "",
+        "onnxFileLcToPiKPConf": "/cvmfs/alice.cern.ch/data/analysis/2022/vAN-20220726/PWGHF/o2/trigger/ModelHandler_onnx_LcToPKPi.onnx",
         "thresholdBDFScoreLcToPiKP": {
             "labels_rows": "",
             "labels_cols": [
