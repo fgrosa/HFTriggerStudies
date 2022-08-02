@@ -127,6 +127,7 @@ def data_prep(config):
     plt.subplots_adjust(left=0.06, bottom=0.06, right=0.99,
                         top=0.96, hspace=0.55, wspace=0.55)
     plt.savefig(f"{out_dir}/DistributionsAll_{channel}.pdf")
+    plt.savefig(f"{out_dir}/DistributionsAll_{channel}.svg")
     plt.close("all")
 
     # _____________________________________________
@@ -135,6 +136,7 @@ def data_prep(config):
         plt.figure(fig.number)
         plt.subplots_adjust(left=0.2, bottom=0.25, right=0.95, top=0.9)
         fig.savefig(f"{out_dir}/CorrMatrix_{channel}_{lab}.pdf")
+        fig.savefig(f"{out_dir}/CorrMatrix_{channel}_{lab}.svg")
 
     return train_test_data
 
@@ -214,8 +216,10 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
     if n_classes > 2:
         for fig, lab in zip(fig_ml_output, leg_labels):
             fig.savefig(f'{out_dir}/MLOutputDistr_{lab}_{channel}.pdf')
+            fig.savefig(f'{out_dir}/MLOutputDistr_{lab}_{channel}.svg')
     else:
         fig_ml_output.savefig(f'{out_dir}/MLOutputDistr_{channel}.pdf')
+        fig_ml_output.savefig(f'{out_dir}/MLOutputDistr_{channel}.svg')
 
     # _____________________________________________
     plt.rcParams["figure.figsize"] = (10, 9)
@@ -228,6 +232,7 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
         config['ml']['roc_auc_approach']
     )
     fig_ROC_curve.savefig(f'{out_dir}/ROCCurveAll_{channel}.pdf')
+    fig_ROC_curve.savefig(f'{out_dir}/ROCCurveAll_{channel}.svg')
     pickle.dump(fig_ROC_curve, open(
         f'{out_dir}/ROCCurveAll_{channel}.pkl', 'wb'))
 
@@ -244,8 +249,10 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
         if i_fig < n_plot:
             lab = leg_labels[i_fig] if n_classes > 2 else ''
             fig.savefig(f'{out_dir}/FeatureImportance_{lab}_{channel}.pdf')
+            fig.savefig(f'{out_dir}/FeatureImportance_{lab}_{channel}.svg')
         else:
             fig.savefig(f'{out_dir}/FeatureImportanceAll_{channel}.pdf')
+            fig.savefig(f'{out_dir}/FeatureImportanceAll_{channel}.svg')
 
 
 def main(config):
