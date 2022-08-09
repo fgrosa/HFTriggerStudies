@@ -160,7 +160,8 @@ def data_prep(config):
     if share == "equal":
         n_bkg = n_prompt = n_nonprompt = n_cand_min
     elif share == "all_signal":
-        n_bkg = (n_prompt + n_nonprompt) * config["data_prep"]["class_balance"]["bkg_factor"]
+        n_bkg = min(
+            n_bkg, [(n_prompt + n_nonprompt) * config["data_prep"]["class_balance"]["bkg_factor"]])
     else:
         print(f"ERROR: class_balance option {share} not implemented")
         sys.exit()
