@@ -1,0 +1,34 @@
+data_prep:
+  dirs:
+    Prompt: [training_samples/LHC22b1b, training_samples/LHC22b1a]
+    NonPrompt: [training_samples/LHC22b1a, training_samples/LHC22b1b]
+    Bkg: [training_samples/LHC21k6]
+  channel: DsToKKPi  # options: D0ToKPi, DplusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
+  preselection: true # preselection possible only for Ds and baryons
+  class_balance:
+    share: equal # options: equal, all_signal
+    bkg_factor: 5 # factor to be applied to bkg sample compared to signal sample (only for share=all_signal)
+  test_fraction: 0.5
+  seed_split: 42
+
+ml:
+  raw_output: false
+  roc_auc_approach: ovo
+  roc_auc_average: macro
+  training_vars: [fPT1, fDCAPrimXY1, fDCAPrimZ1, fPT2, fDCAPrimXY2, fDCAPrimZ2, fPT3, fDCAPrimXY3, fDCAPrimZ3]
+  hyper_pars: {'max_depth': 3, 'learning_rate': 0.08949151681060559, 'n_estimators': 693, 'min_child_weight': 10, 'n_jobs': 4,
+               'tree_method': 'hist', 'subsample': 0.9462450197832315, 'colsample_bytree': 0.8604864699733593}
+  hyper_pars_opt:
+    activate: false
+    ntrials: 25
+    njobs: 4
+    timeout: 1800
+    hyper_par_ranges: {'max_depth': !!python/tuple [2, 3], 
+                       'learning_rate': !!python/tuple [0.01, 0.1],
+                       'n_estimators': !!python/tuple [300, 800], 
+                       'min_child_weight': !!python/tuple [1, 10],
+                       'subsample': !!python/tuple [0.8, 1.], 
+                       'colsample_bytree': !!python/tuple [0.8, 1.]}
+
+output:
+  directory: trainings/Ds
