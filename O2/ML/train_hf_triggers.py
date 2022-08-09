@@ -3,6 +3,7 @@ Script for the training of ML models to be used in HF triggers
 """
 
 import os
+import sys
 import argparse
 import numpy as np
 import pandas as pd
@@ -100,16 +101,29 @@ def data_prep(config):
     n_nonprompt = len(df_nonprompt)
     n_bkg = len(df_bkg)
     print("\nNumber of available candidates: \n     "
-          f"Prompt: {n_prompt}\n     FD: {n_nonprompt}\n     Bkg: {n_bkg}\n")
+          f"prompt: {n_prompt}\n     nonprompt: {n_nonprompt}\n     bkg: {n_bkg}\n")
 
     n_cand_min = min([n_prompt, n_nonprompt, n_bkg])
+    share = config["data_prep"]["class_balance"]["share"]
+    if share == "equal":
+        n_bkg = n_prompt = n_nonprompt = n_cand_min
+    elif share == "all_signal":
+        n_bkg = (n_prompt + n_nonprompt) * config["data_prep"]["class_balance"]["bkg_factor"]
+    else:
+        print(f"ERROR: class_balance option {share} not implemented")
+        sys.exit()
+
+    print("\nNumber of candidates used for training and test: \n     "
+          f"prompt: {n_prompt}\n     nonprompt: {n_nonprompt}\n     bkg: {n_bkg}\n")
+
     df_tot = pd.concat(
-        [df_bkg[:n_cand_min],
-         df_prompt[:n_cand_min],
-         df_nonprompt[:n_cand_min]],
+        [df_bkg[:n_bkg],
+         df_prompt[:n_prompt],
+         df_nonprompt[:n_nonprompt]],
         sort=True
     )
-    labels_array = np.array([0]*n_cand_min + [1]*n_cand_min + [2]*n_cand_min)
+
+    labels_array = np.array([0]*n_bkg + [1]*n_prompt + [2]*n_nonprompt)
     if test_f < 1:
         train_set, test_set, y_train, y_test = train_test_split(
             df_tot, labels_array, test_size=test_f, random_state=seed_split
