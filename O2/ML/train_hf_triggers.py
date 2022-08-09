@@ -19,6 +19,27 @@ from hipe4ml.tree_handler import TreeHandler
 from hipe4ml_converter.h4ml_converter import H4MLConverter
 
 
+def is_selected_massKK(cand, mass_cut):
+    """
+    Function that returns True if the mass of the KK is in the selected mass range
+    """
+    if cand["DeltaMassKKFirst"] < mass_cut or cand["DeltaMassKKSecond"] < mass_cut:
+        return True
+    else:
+        return False
+
+
+def is_selected_proton_pid(cand, nsigma_tpc, nsigma_tof):
+    """
+    Function that returns True if the proton PID is in the selected range
+    """
+    if (cand["nsigmaPrTPC1"] < nsigma_tpc and (cand["nsigmaPrTOF1"] < nsigma_tof or cand["nsigmaPrTOF1"] == np.nan)) \
+            or (cand["nsigmaPrTPC3"] < nsigma_tpc and (cand["nsigmaPrTOF3"] < nsigma_tof or cand["nsigmaPrTOF3"] == np.nan)):
+        return True
+    else:
+        return False
+
+
 def get_list_input_files(indirs, channel):
     """
     function that returns the list of files
@@ -85,6 +106,29 @@ def data_prep(config):
     df_prompt = hdl_prompt.get_data_frame()
     df_nonprompt = hdl_nonprompt.get_data_frame()
     df_bkg = hdl_bkg.get_data_frame()
+
+    if config["data_prep"]["preselection"]["enable"]:
+        if channel in ["D0ToKPi", "DPlusToPiKPi"]:
+            print("\nWARNING: No preselection for D0 and D+ to be applied, skip it\n")
+        else:
+            if channel == "DsToKKPi":
+                mass_cut = config["data_prep"]["preselection"]["delta_mass_kk"]
+                df_prompt = df_prompt.apply(
+                    lambda row: is_selected_massKK(row, mass_cut), axis=1)
+                df_nonprompt = df_nonprompt.apply(
+                    lambda row: is_selected_massKK(row, mass_cut), axis=1)
+                df_bkg = df_bkg.apply(
+                    lambda row: is_selected_massKK(row, mass_cut), axis=1)
+            elif channel in ["LcToPKPi", "XicToPKPi"]:
+                nsigma_tpc = config["data_prep"]["preselection"]["nsigma_tpc_proton"]
+                nsigma_tof = config["data_prep"]["preselection"]["nsigma_tof_proton"]
+                df_prompt = df_prompt.apply(
+                    lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
+                df_nonprompt = df_nonprompt.apply(
+                    lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
+                df_bkg = df_bkg.apply(
+                    lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
+
     use_pid = False
     for var in training_vars:
         if "NSigma" in var:
