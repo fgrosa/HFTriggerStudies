@@ -23,21 +23,21 @@ def is_selected_massKK(cand, mass_cut):
     """
     Function that returns True if the mass of the KK is in the selected mass range
     """
-    if cand["DeltaMassKKFirst"] < mass_cut or cand["DeltaMassKKSecond"] < mass_cut:
-        return True
+    if cand["fDeltaMassKKFirst"] < mass_cut or cand["fDeltaMassKKSecond"] < mass_cut:
+        return 1
     else:
-        return False
+        return 0
 
 
 def is_selected_proton_pid(cand, nsigma_tpc, nsigma_tof):
     """
     Function that returns True if the proton PID is in the selected range
     """
-    if (cand["nsigmaPrTPC1"] < nsigma_tpc and (cand["nsigmaPrTOF1"] < nsigma_tof or cand["nsigmaPrTOF1"] == np.nan)) \
-            or (cand["nsigmaPrTPC3"] < nsigma_tpc and (cand["nsigmaPrTOF3"] < nsigma_tof or cand["nsigmaPrTOF3"] == np.nan)):
-        return True
+    if (cand["fNsigmaPrTPC1"] < nsigma_tpc and (cand["fNsigmaPrTOF1"] < nsigma_tof or cand["fNsigmaPrTOF1"] == np.nan)) \
+            or (cand["fNsigmaPrTPC3"] < nsigma_tpc and (cand["fNsigmaPrTOF3"] < nsigma_tof or cand["fNsigmaPrTOF3"] == np.nan)):
+        return 1
     else:
-        return False
+        return 0
 
 
 def get_list_input_files(indirs, channel):
@@ -121,21 +121,24 @@ def data_prep(config):
         else:
             if channel == "DsToKKPi":
                 mass_cut = config["data_prep"]["preselection"]["delta_mass_kk"]
-                df_prompt = df_prompt.apply(
+                df_prompt["fIsSel"] = df_prompt.apply(
                     lambda row: is_selected_massKK(row, mass_cut), axis=1)
-                df_nonprompt = df_nonprompt.apply(
+                df_nonprompt["fIsSel"] = df_nonprompt.apply(
                     lambda row: is_selected_massKK(row, mass_cut), axis=1)
-                df_bkg = df_bkg.apply(
+                df_bkg["fIsSel"] = df_bkg.apply(
                     lambda row: is_selected_massKK(row, mass_cut), axis=1)
             elif channel in ["LcToPKPi", "XicToPKPi"]:
                 nsigma_tpc = config["data_prep"]["preselection"]["nsigma_tpc_proton"]
                 nsigma_tof = config["data_prep"]["preselection"]["nsigma_tof_proton"]
-                df_prompt = df_prompt.apply(
+                df_prompt["fIsSel"] = df_prompt.apply(
                     lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
-                df_nonprompt = df_nonprompt.apply(
+                df_nonprompt["fIsSel"] = df_nonprompt.apply(
                     lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
-                df_bkg = df_bkg.apply(
+                df_bkg["fIsSel"] = df_bkg.apply(
                     lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
+            df_prompt = df_prompt.query("fIsSel > 0.5")
+            df_nonprompt = df_nonprompt.query("fIsSel > 0.5")
+            df_bkg = df_bkg.query("fIsSel > 0.5")
 
     use_pid = False
     for var in training_vars:
@@ -149,6 +152,7 @@ def data_prep(config):
         df_nonprompt.dropna(inplace=True)
         df_bkg.dropna(inplace=True)
 
+    print(df_prompt)
     n_prompt = len(df_prompt)
     n_nonprompt = len(df_nonprompt)
     n_bkg = len(df_bkg)
@@ -161,7 +165,7 @@ def data_prep(config):
         n_bkg = n_prompt = n_nonprompt = n_cand_min
     elif share == "all_signal":
         n_bkg = min(
-            n_bkg, [(n_prompt + n_nonprompt) * config["data_prep"]["class_balance"]["bkg_factor"]])
+            [n_bkg, (n_prompt + n_nonprompt) * config["data_prep"]["class_balance"]["bkg_factor"]])
     else:
         print(f"ERROR: class_balance option {share} not implemented")
         sys.exit()
