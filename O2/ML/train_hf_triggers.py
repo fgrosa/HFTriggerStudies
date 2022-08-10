@@ -70,10 +70,18 @@ def get_list_input_files(indirs, channel):
                     for subsubdir in os.listdir(subdir):
                         subsubdir = os.path.join(subdir, subsubdir)
                         if os.path.isdir(subsubdir):
-                            file_prompt = os.path.join(
+                            file = os.path.join(
                                 subsubdir, f"{cand_type}_{channel}.parquet.gzip")
-                            if os.path.isfile(file_prompt):
-                                file_lists[cand_type].append(file_prompt)
+                            if os.path.isfile(file):
+                                file_lists[cand_type].append(file)
+                            else:
+                                for subsubsubdir in os.listdir(subsubdir):
+                                    subsubsubdir = os.path.join(subsubdir, subsubsubdir)
+                                    if os.path.isdir(subsubsubdir):
+                                        file = os.path.join(
+                                            subsubsubdir, f"{cand_type}_{channel}.parquet.gzip")
+                                        if os.path.isfile(file):
+                                            file_lists[cand_type].append(file)
 
     return file_lists
 
@@ -152,7 +160,8 @@ def data_prep(config):
     if share == "equal":
         n_bkg = n_prompt = n_nonprompt = n_cand_min
     elif share == "all_signal":
-        n_bkg = (n_prompt + n_nonprompt) * config["data_prep"]["class_balance"]["bkg_factor"]
+        n_bkg = min(
+            n_bkg, [(n_prompt + n_nonprompt) * config["data_prep"]["class_balance"]["bkg_factor"]])
     else:
         print(f"ERROR: class_balance option {share} not implemented")
         sys.exit()

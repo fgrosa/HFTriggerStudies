@@ -1,8 +1,8 @@
 data_prep:
   dirs:
-    Prompt: [training_samples/LHC22b1b, training_samples/LHC22b1a]
-    NonPrompt: [training_samples/LHC22b1a, training_samples/LHC22b1b]
-    Bkg: [training_samples/LHC21k6]
+    Prompt: [training_samples/LHC22b1b/31003, training_samples/LHC22b1a/31002]
+    Nonprompt: [training_samples/LHC22b1a/31002, training_samples/LHC22b1b/31003]
+    Bkg: [training_samples/LHC21k6/31001]
   channel: DsToKKPi  # options: D0ToKPi, DplusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
   preselection:
     enable: false # preselection possible only for Ds and baryons

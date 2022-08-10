@@ -20,7 +20,7 @@ channels_3p = {"DplusToPiKPi": 1,
                "XicToPKPi": 4}
 
 
-def divide_df_for_origin(df, cols_to_remove=['fFlagOrigin'], channel=None):
+def divide_df_for_origin(df, cols_to_remove=None, channel=None):
     """
     Method to divide a dataframe in three (prompt, non-prompt, bkg)
 
@@ -37,13 +37,16 @@ def divide_df_for_origin(df, cols_to_remove=['fFlagOrigin'], channel=None):
     - df_bkg: pandas dataframe containing only background candidates
     """
 
-    df_prompt = df.query("fFlagOrigin == 0")
-    df_nonprompt = df.query("fFlagOrigin == 1")
+    if cols_to_remove is None:
+        cols_to_remove = ['fFlagOrigin']
+
+    df_prompt = df.query("fFlagOrigin == 1")
+    df_nonprompt = df.query("fFlagOrigin == 2")
     if channel is not None and "fChannel" in df_prompt.columns:
         df_prompt = df_prompt.query(f"fChannel == {channel}")
         df_nonprompt = df_nonprompt.query(f"fChannel == {channel}")
-    df_bkg = df.query("fFlagOrigin == 2")
-    cols_to_keep = set(df_prompt.columns)
+    df_bkg = df.query("fFlagOrigin == 0")
+    cols_to_keep = list(df_prompt.columns)
     for col in cols_to_remove:
         cols_to_keep.remove(col)
     df_prompt = df_prompt[cols_to_keep]
@@ -72,10 +75,19 @@ def main(input_dir, max_files=1000, downscale_bkg=1., force=False):
                         if "AO2D.root" in file:
                             input_files.append(os.path.join(
                                 input_dir, subdir, subsubdir, file))
+                        elif os.path.isdir(os.path.join(input_dir, subdir, subsubdir, file)):
+                            for file2 in os.listdir(os.path.join(
+                                input_dir, subdir, subsubdir, file)):
+                                if "AO2D.root" in file2:
+                                    input_files.append(os.path.join(
+                                        input_dir, subdir, subsubdir, file, file2))
 
     df_2p, df_3p = None, None
     with alive_bar(len(input_files[:max_files])) as bar_alive:
         for file in input_files[:max_files]:
+            print(f"\033[32mExtracting dataframes from input "
+                  f"{file}\033[0m")
+
             file_root = uproot.open(file)
             indir = os.path.split(file)[0]
 
