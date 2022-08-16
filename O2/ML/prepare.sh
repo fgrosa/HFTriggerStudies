@@ -11,7 +11,7 @@ do
 done
 
 # if you want to enter a virtual environment
-virtual_env=True
+virtual_env=False
 enter_virtual_env="source /home/abigot/Documents/ml_env/bin/activate"
 if [ $virtual_env = True ]
 then
