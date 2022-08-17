@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# \brief code to download and prepare the data that will be used to train the BDT
+# \brief code to download the data that will be used to train the BDT
 
 # dataset=("beauty enriched" "charm enriched" "general purpose MC")
 dataset=("LHC22b1a" "LHC22b1b" "LHC21k6_pp")
