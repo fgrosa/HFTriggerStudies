@@ -35,3 +35,8 @@ ml:
 
 output:
   directory: trainings/Dplus
+  out_labels: # output labels, keep the right number of classes
+      Bkg: Bkg
+      Prompt: Prompt
+      Nonprompt: Nonprompt
+  column_to_save_list: ['fPT3Prong'] # list of variables saved in the dataframes with the applied models
