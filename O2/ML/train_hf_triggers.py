@@ -258,6 +258,7 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
 
     test_set_df = train_test_data[2]
     test_set_df = test_set_df.loc[:, df_column_to_save_list]
+    test_set_df[f'Labels'] = train_test_data[3]
 
     for pred, lab in enumerate(output_labels):
         test_set_df[f'ML_output_{lab}'] = y_pred_test[:, pred]
