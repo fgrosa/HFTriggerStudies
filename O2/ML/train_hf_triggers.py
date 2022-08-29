@@ -253,6 +253,17 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
         multi_class_opt=config["ml"]["roc_auc_approach"]
     )
 
+    output_labels = [config["output"]["out_labels"]["Bkg"], config["output"]["out_labels"]["Prompt"], config["output"]["out_labels"]["Nonprompt"]]
+    df_column_to_save_list = config["output"]["column_to_save_list"]
+
+    test_set_df = train_test_data[2]
+    test_set_df = test_set_df.loc[:, df_column_to_save_list]
+    test_set_df[f'Labels'] = train_test_data[3]
+
+    for pred, lab in enumerate(output_labels):
+        test_set_df[f'ML_output_{lab}'] = y_pred_test[:, pred]
+    test_set_df.to_parquet(f"{out_dir}/{channel}_ModelApplied.parquet.gzip")
+
     # save model
     if os.path.isfile(f"{out_dir}/ModelHandler_{channel}.pickle"):
         os.remove(f"{out_dir}/ModelHandler_{channel}.pickle")
