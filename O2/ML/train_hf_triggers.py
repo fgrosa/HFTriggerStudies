@@ -152,7 +152,6 @@ def data_prep(config):
         df_nonprompt.dropna(inplace=True)
         df_bkg.dropna(inplace=True)
 
-    print(df_prompt)
     n_prompt = len(df_prompt)
     n_nonprompt = len(df_nonprompt)
     n_bkg = len(df_bkg)
