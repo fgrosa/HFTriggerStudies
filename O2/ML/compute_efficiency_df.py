@@ -39,13 +39,13 @@ def find_cut_indices(thresholds, BDT_cuts):
     - thresholds: array of BDT cuts to browse
     - BDT_cuts: array of chosen BDT output values for each class
     --------------------------------
-    Outputs
-    - effifiency: 3D array efficiency[pT index][class][efficiency value]
+    Output
+    - idx_list: index corresponding to chosen BDT cut in the 3D array eff
     """
-    idx_list = []
-    for cut in BDT_cuts:
-        idx, = np.where(thresholds == cut)
-        idx_list.append(idx[0])
+    idx_list = {}
+    for clas in BDT_cuts:
+        idx, = np.where(thresholds == BDT_cuts[clas])
+        idx_list[clas] = idx[0]
     return idx_list
 
 def compute_eff_vs_pt(eff, cuts_indices):
@@ -60,11 +60,11 @@ def compute_eff_vs_pt(eff, cuts_indices):
     Outputs
     - effifiency: 3D array efficiency[pT index][class][efficiency value]
     """
-    eff_vs_pt = []
-    for clas in range(3):
-        eff_vs_pt.append([])
-        for ipt in range(len(eff)):
-            eff_vs_pt[clas].append(eff[ipt][clas][cuts_indices[clas]])
+    eff_vs_pt = {}
+    for iclas, clas in enumerate(cuts_indices):
+        eff_vs_pt[clas] = []
+        for ipt, _ in enumerate(eff):
+            eff_vs_pt[clas].append(eff[ipt][iclas][cuts_indices[clas]])
     return eff_vs_pt
 
 def compute_efficiency(df, pt_prong, pt_bins, BDT_cuts, thresholds):
@@ -98,7 +98,7 @@ def compute_efficiency(df, pt_prong, pt_bins, BDT_cuts, thresholds):
                 if iclas == 0:
                     df_cut = df_pt.query(f"ML_output_{clas} < {thr}")
                 else:
-                    df_cut = df_pt.query(f"ML_output_Bkg < {BDT_cuts[0]} and ML_output_{clas} > {thr}")
+                    df_cut = df_pt.query(f"ML_output_Bkg < {BDT_cuts['Bkg']} and ML_output_{clas} > {thr}")
                 efficiency[ipt][iclas].append(np.float(len(df_cut)) / den)
 
     return efficiency
@@ -110,7 +110,7 @@ def plot_efficiency_vs_BDTscore(eff, channel, pt_bins, BDT_cuts, thresholds):
     ipt = 0
     for label in range(3):
         for iclas, clas in enumerate(["Bkg", "Prompt", "Nonprompt"]):
-            plt.subplot(1,3,iclas+1)
+            plt.subplot(1, 3, iclas+1)
             plt.scatter(thresholds, eff[label][0][iclas])
             plt.ylim(0.00001,1.)
             plt.yscale('log')
@@ -118,8 +118,8 @@ def plot_efficiency_vs_BDTscore(eff, channel, pt_bins, BDT_cuts, thresholds):
             if iclas == 0:
                 plt.ylabel(f"Efficiency for {clas} at pT = {pt_bins[ipt]} GeV/c")
             else:
-                plt.ylabel(f"Efficiency for {clas} at pT = {pt_bins[ipt]} GeV/c (Bkg BDT < {BDT_cuts[0]})")
-        plt.legend(['Bkg', 'Prompt', 'Nonprompt'])
+                plt.ylabel(f"Efficiency for {clas} at pT = {pt_bins[ipt]} GeV/c (Bkg BDT < {BDT_cuts['Bkg']})")
+        plt.legend(['Bkg', 'Prompt', 'Nonprompt'], loc="best")
 
     plt.show()
 
@@ -131,16 +131,16 @@ def plot_efficiency_vs_pt(eff_vs_pt, channel, pt_bins, BDT_cuts):
 
     for label in range(3):
         for iclas, clas in enumerate(["Bkg", "Prompt", "Nonprompt"]):
-            plt.subplot(1,3,iclas+1)
-            plt.errorbar(bins_mean, eff_vs_pt[label][iclas], xerr = bins_width, fmt = 'o', markersize=5, elinewidth = 2, capsize=4)
+            plt.subplot(1, 3, iclas+1)
+            plt.errorbar(bins_mean, eff_vs_pt[label][clas], xerr = bins_width, fmt = 'o', markersize=5, elinewidth = 2, capsize=4)
             plt.ylim(0.001,1.)
             plt.yscale('log')
-            plt.xlabel(r"$p_T$ (GeV/c)")
+            plt.xlabel(r"$p_\mathrm{T}$ (GeV/$c$)")
             if iclas == 0:
-                plt.ylabel(f"Efficiency for {clas} BDT cut at {BDT_cuts[iclas]}")
+                plt.ylabel(f"Efficiency for {clas} BDT cut at {BDT_cuts[clas]}")
             else:
-                plt.ylabel(f"Efficiency for {clas} BDT cut at {BDT_cuts[iclas]} (Bkg BDT < {BDT_cuts[0]})")
-        plt.legend(['Bkg', 'Prompt', 'Nonprompt'])
+                plt.ylabel(f"Efficiency for {clas} BDT cut at {BDT_cuts[clas]} (Bkg BDT < {BDT_cuts['Bkg']})")
+        plt.legend(['Bkg', 'Prompt', 'Nonprompt'], loc="best")
 
     plt.show()
 
@@ -152,14 +152,11 @@ def main(config):
     infile = config["input_file"]
     channel = config["channel"]
     pt_bins = config["pt_bins"]
-    bkg_BDT_cut = config["BDT_cut"]["Bkg"]
-    prompt_BDT_cut = config["BDT_cut"]["Prompt"]
-    nonprompt_BDT_cut = config["BDT_cut"]["Nonprompt"]
+    BDT_cuts = config["BDT_cuts"]
     n_points = config["n_points"]
 
     # store the indices corresponding to the BDT cuts for each class
     thresholds = np.linspace(0., 1., n_points)
-    BDT_cuts = [bkg_BDT_cut, prompt_BDT_cut, nonprompt_BDT_cut]
     cuts_indices = find_cut_indices(thresholds, BDT_cuts)
 
     # distinguish between 2-prong and 3-prong channels
