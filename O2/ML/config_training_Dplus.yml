@@ -1,8 +1,8 @@
 data_prep:
   dirs:
-    Prompt: [training_samples/train_29283, training_samples/train_29284]
-    Nonprompt: [training_samples/train_29283, training_samples/train_29284]
-    Bkg: [training_samples/train_29282]
+    Prompt: [training_samples/LHC22b1a_train_31002, training_samples/LHC22b1b_train_31003]
+    Nonprompt: [training_samples/LHC22b1a_train_31002, training_samples/LHC22b1b_train_31003]
+    Bkg: [training_samples/LHC221k6_pp_train_31202]
   channel: DplusToPiKPi  # options: D0ToKPi, DplusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
   preselection:
     enable: false # preselection possible only for Ds and baryons
@@ -22,7 +22,7 @@ ml:
   training_vars: [fPT1, fDCAPrimXY1, fDCAPrimZ1, fPT2, fDCAPrimXY2, fDCAPrimZ2, fPT3, fDCAPrimXY3, fDCAPrimZ3]
   hyper_pars: {'max_depth':4, 'learning_rate':0.01, 'n_estimators':1000, 'min_child_weight':5, 'n_jobs':4, 'tree_method':hist}
   hyper_pars_opt:
-    activate: true
+    activate: false
     ntrials: 25
     njobs: 4
     timeout: 1800
