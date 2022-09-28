@@ -1,0 +1,36 @@
+Preselection:
+  file: 
+    name: /home/abigot/Documents/ALICE/HFFilter/Efficiency/PreSelection/merged.root
+    tree_mc_rec: hf-mc-validation-rec
+    tree_mc_gen: hf-mc-validation-gen
+  channel: D0ToKPi
+
+ML_output: 
+  file: /home/abigot/Documents/ALICE/HFFilter/Efficiency/BDT_applied/D0ToKPi_ModelApplied.parquet.gzip
+  channel: D0ToKPi
+  BDT_cuts:
+    Bkg: 0.1
+    Prompt: 0.4
+    Nonprompt: 0.5
+  n_points: 101
+
+FONLL_output:
+  file: /home/abigot/Documents/ALICE/HFFilter/Efficiency/BDT_applied/DmesonLcPredictions_13TeV_y05_FFptDepLHCb_BRPDG_PDG2020_PromptLcMod.root
+  channel: D0Kpi # check channel syntax in the file
+
+pt_bins: [1., 2., 3., 4., 5., 6., 7., 8., 10.]
+pt_bin: [1., 2.] # pt range selected for plots
+
+plot_options:
+  preselection_efficiency: 
+    plot: True
+    save: True
+  BDT_efficiency_vs_BDTscore:
+    plot: True
+    save: True
+  BDT_efficiency_vs_pt:
+    plot: True
+    save: True
+  expected_signal:
+    plot: True
+    save: True
