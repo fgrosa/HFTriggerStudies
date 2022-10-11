@@ -24,13 +24,13 @@ pt_bin: [1., 2.] # pt range selected for plots
 plot_options:
   preselection_efficiency: 
     plot: True
-    save: True
+    save: False
   BDT_efficiency_vs_BDTscore:
     plot: True
-    save: True
+    save: False
   BDT_efficiency_vs_pt:
     plot: True
-    save: True
+    save: False
   expected_signal:
     plot: True
-    save: True
+    save: False
