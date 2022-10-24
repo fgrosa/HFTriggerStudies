@@ -80,6 +80,7 @@ class Preselection:
         for name in self.particles_dico:
             if name in channel:
                 self.particleName = name
+        print('Init Preselection instance')
     @property
     def rec_key(self):
         return get_rec_keys(self, self.tree_mc_rec.keys())

@@ -9,8 +9,9 @@ import preselection # module for Preselection study
 import ml_output # module for ML output study
 import fonll_output # module for FONLL output study
 import efficiency # module for total efficiencies computation
-import yield_fraction # module to get fprompt and fnonprompt       
+import yield_fraction # module to get fprompt and fnonprompt
 from expected_signal import ExpectedSignal
+import expected_bkg
 
 def main(config):
     """
@@ -64,12 +65,12 @@ def main(config):
         ml_output.plot_efficiency_vs_pt(BDT_efficiencies_at_BDT_cut, channel, pt_bins, BDT_cuts, save)
 
 
-    """ 
+    """
     TOTAL EFFICIENCIES
     """
     prompt_total_efficiencies = efficiency.TotalEfficiencies(eval('{}_preselection_efficiencies_dico'.format('prompt')), BDT_efficiencies["Prompt"], pt_bins, thresholds).total_efficiencies
     nonprompt_total_efficiencies = efficiency.TotalEfficiencies(eval('{}_preselection_efficiencies_dico'.format('nonprompt')), BDT_efficiencies["Nonprompt"], pt_bins, thresholds).total_efficiencies
-    
+
     """
     FONLL
     """
@@ -94,14 +95,31 @@ def main(config):
         save = config["plot_options"]["expected_signal"]["save"]
         pt_bin = (config["pt_bin"][0], config["pt_bin"][1])
         expectedSignal_instance.plot_expected_signal_and_fractions(channel, prompt_fonll.number_of_events_list, pt_bin, save)
-    
+
+    """
+    EXPECTED BACKGROUND
+    """
+    file_name = config["AO2D_file"]["file"]
+    particleName = config["AO2D_file"]["particle_name"]
+    AO2Dfile = uproot.open(file_name)
+    # keys to access invariant mass plots
+    branch, leaf_keys = expected_bkg.get_keys(AO2Dfile, particleName)
+    # if there are several keys (i.e. several decay channels)
+    # we need to create an instance for each key
+    exp_bkg_list = []
+    for key in leaf_keys:
+        data_handler = expected_bkg.get_data_handler(AO2Dfile, branch, key)
+        exp_bkg_list.append(expected_bkg.ExpectedBackground(data_handler).expected_background)
+    # total expected background
+    exp_bkg = sum(exp_bkg_list)
+
     # show figures
     plt.show()
 
     # close files
     preselectionFile.close()
     FONLL_file.close()
-
+    AO2Dfile.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Arguments")

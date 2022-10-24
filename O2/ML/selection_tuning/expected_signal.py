@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 class ExpectedSignal:
     """
-    Class to get (non)prompt fraction of yield
+    Class to get expected signal
     """
     def __init__(self, prompt_fonll, fprompt, fnonprompt, prompt_total_eff, pt_bins, thresholds):
         self.prompt_fonll = prompt_fonll
