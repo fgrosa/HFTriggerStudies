@@ -29,36 +29,17 @@ class ExpectedBackground:
     """
     Class to get expected background
     """
-    def __init__(self, df):
+    def __init__(self, df, key, eff, pt_bins, thresholds):
         self.df = df
+        self.key = key
+        self.eff = eff
+        self.pt_bins = pt_bins
+        self.thresholds = thresholds
         print("Init ExpectedBackground instance")
 
     @property
-    def selected_counts(self):
-        """
-        Helper task to compute the entries in the histogram
-        between mean-3sigma and mean+3sigma
-        """
-        mean, sigma = self.df.mean()[0], self.df.std()[0]
-        integration_domain = (mean - 3*sigma, mean + 3*sigma)
-        name = self.df.axes[1][0]
-        selected_df = self.df.query(f"{integration_domain[0]} <= {name} <= {integration_domain[1]}")
-        return len(selected_df)
-
-    @property
-    def total_counts(self):
-        """
-        Helper task to compute the total number of entries in the histogram
-        """
-        return len(self.df)
-
-    @property
-    def normalized_area(self):
-        """
-        Helper task to compute normalized area of histogram
-        between mean-3sigma and mean+3sigma
-        """
-        return self.selected_counts/self.total_counts
+    def pt_prong(self):
+        return "fPT2Prong" if "D0" in self.key else "fPT3Prong"
 
     @property
     def expected_events(self):
@@ -74,20 +55,23 @@ class ExpectedBackground:
         """
         Helper task to compute the expected background
         """
-        return self.normalized_area*self.expected_events
+        pt_mins, pt_maxs = self.pt_bins[:-1], self.pt_bins[1:]
+        exp_bkg = {}
+        for ipt, (pt_min, pt_max) in enumerate(zip(pt_mins, pt_maxs)):
+            exp_bkg[(pt_min, pt_max)] = {}
+            # select pt bin in dataframe
+            df_pt = self.df.query(f"{pt_min} < {self.pt_prong} < {pt_max}")
+            den = len(df_pt)
+            # define the invariant mass window: mean+-3sigma
+            mean, sigma = df_pt[self.key].mean(), df_pt[self.key].std()
+            invmass_window = (mean - 3*sigma, mean + 3*sigma)
+            # select invariant mass window
+            df_invmass = df_pt.query(f"{invmass_window[0]} <= {self.key} <= {invmass_window[1]}")
+            for iclas, clas in enumerate(["Bkg", "Prompt", "Nonprompt"]):
+                exp_bkg[(pt_min, pt_max)][clas] = []
+                for ithr, thr in enumerate(self.thresholds):
+                    exp_bkg[(pt_min, pt_max)][clas].append(float(len(df_invmass))/den*self.expected_events)
+                    # efficiency correction
+                    exp_bkg[(pt_min, pt_max)][clas][ithr] *= self.eff[(pt_min, pt_max)][clas][ithr]
 
-"""
-particleName = "D0"
-file_name = "./AO2D.root"
-file = uproot.open(file_name)
-# keys to access invariant mass plots
-branch, leaf_keys = get_keys(file, particleName)
-
-expected_bkg_list = []
-for leaf_key in leaf_keys:
-    key = branch + '/' + leaf_key
-    df = file[key].arrays(library='pd')
-    expected_bkg_list.append(ExpectedBackground(df).expected_background)
-# total expected background
-exp_bkg = sum(exp_bkg_list)
-"""
+        return exp_bkg

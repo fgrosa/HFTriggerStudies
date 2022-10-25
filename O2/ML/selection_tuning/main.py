@@ -108,14 +108,21 @@ def main(config):
     # we need to create an instance for each key
     expected_bkg_list = []
     for leaf_key in leaf_keys:
-        key = branch + '/' + leaf_key
-        df = AO2Dfile[key].arrays(library='pd')
-        expected_bkg_list.append(expected_bkg.ExpectedBackground(df).expected_background)
+        df = AO2Dfile[branch].arrays(library='pd')
+        expected_bkg_list.append(expected_bkg.ExpectedBackground(df, leaf_key, BDT_efficiencies['Bkg'], pt_bins, thresholds).expected_background)
     # total expected background
-    exp_bkg = sum(expected_bkg_list)
+    pt_mins, pt_maxs = pt_bins[:-1], pt_bins[1:]
+    total_expected_bkg = {}
+    for pt_bin in zip(pt_mins, pt_maxs):
+        total_expected_bkg[pt_bin] = {}
+        for clas in ["Bkg", "Prompt", "Nonprompt"]:
+            total_expected_bkg[pt_bin][clas] = [0]*len(thresholds)
+            for ithr, _ in enumerate(thresholds):
+                for exp_bkg in expected_bkg_list:
+                    total_expected_bkg[pt_bin][clas][ithr] += exp_bkg[pt_bin][clas][ithr]
 
     # show figures
-    plt.show()
+    #plt.show()
 
     # close files
     preselectionFile.close()
