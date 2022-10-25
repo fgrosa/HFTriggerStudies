@@ -106,12 +106,13 @@ def main(config):
     branch, leaf_keys = expected_bkg.get_keys(AO2Dfile, particleName)
     # if there are several keys (i.e. several decay channels)
     # we need to create an instance for each key
-    exp_bkg_list = []
-    for key in leaf_keys:
-        data_handler = expected_bkg.get_data_handler(AO2Dfile, branch, key)
-        exp_bkg_list.append(expected_bkg.ExpectedBackground(data_handler).expected_background)
+    expected_bkg_list = []
+    for leaf_key in leaf_keys:
+        key = branch + '/' + leaf_key
+        df = AO2Dfile[key].arrays(library='pd')
+        expected_bkg_list.append(expected_bkg.ExpectedBackground(df).expected_background)
     # total expected background
-    exp_bkg = sum(exp_bkg_list)
+    exp_bkg = sum(expected_bkg_list)
 
     # show figures
     plt.show()

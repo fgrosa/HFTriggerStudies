@@ -24,79 +24,33 @@ def get_keys(file, particleName):
                 branch = branch_key + "/"
     return branch, leaf_keys
 
-def get_data_handler(file, branch, leaf_key):
-    INFILE = os.path.join(os.getcwd(), file.file_path)
-
-    return DataHandler(INFILE, var_name=leaf_key, treename=branch+leaf_key, limits=None, nbins=100)
-
-
 #pylint: disable=redefined-outer-name
 class ExpectedBackground:
     """
     Class to get expected background
     """
-    def __init__(self, data_handler):
-        self.data_handler = data_handler
-        self.data = self.data_handler.get_binned_data_from_unbinned_data()
-        self.bin_center = self.data_handler.get_bin_center()
+    def __init__(self, df):
+        self.df = df
         print("Init ExpectedBackground instance")
 
     @property
-    def mean(self):
+    def selected_counts(self):
         """
-        Helper task to compute the mean of the distribution
-        """
-        mean = 0
-        for (value, center) in zip(self.data, self.bin_center):
-            mean += value*center
-        mean /= sum(self.data)
-        return mean
-
-    @property
-    def sigma(self):
-        """
-        Helper task to compute the std deviation of the distribution
-        """
-        variance = 0
-        for (value, center) in zip(self.data, self.bin_center):
-            variance += value*(center - self.mean)**2
-        variance /= (sum(self.data) - 1)
-        sigma = np.sqrt(variance)
-        return sigma
-
-    @property
-    def bin_width(self):
-        """
-        Helper task to compute the bin width
-        """
-        bin_width = []
-        binning = self.data_handler.get_binned_obs_from_unbinned_data().binning[0]
-        for bin_ in binning:
-            bin_width.append(bin_[1] - bin_[0])
-        return bin_width
-
-    @property
-    def area(self):
-        """
-        Helper task to compute area of histogram
+        Helper task to compute the entries in the histogram
         between mean-3sigma and mean+3sigma
         """
-        area = 0
-        integration_domain = (self.mean - 3*self.sigma, self.mean + 3*self.sigma)
-        for (counts, center, width) in zip(self.data, self.bin_center, self.bin_width):
-            if  integration_domain[0] <= center <= integration_domain[1]:
-                area += counts*width
-        return area
+        mean, sigma = self.df.mean()[0], self.df.std()[0]
+        integration_domain = (mean - 3*sigma, mean + 3*sigma)
+        name = self.df.axes[1][0]
+        selected_df = self.df.query(f"{integration_domain[0]} <= {name} <= {integration_domain[1]}")
+        return len(selected_df)
 
     @property
-    def total_area(self):
+    def total_counts(self):
         """
-        Helper task to compute total area of histogram
+        Helper task to compute the total number of entries in the histogram
         """
-        area = 0
-        for (counts, width) in zip(self.data, self.bin_width):
-            area += counts*width
-        return area
+        return len(self.df)
 
     @property
     def normalized_area(self):
@@ -104,7 +58,7 @@ class ExpectedBackground:
         Helper task to compute normalized area of histogram
         between mean-3sigma and mean+3sigma
         """
-        return self.area/self.total_area
+        return self.selected_counts/self.total_counts
 
     @property
     def expected_events(self):
@@ -117,25 +71,23 @@ class ExpectedBackground:
 
     @property
     def expected_background(self):
+        """
+        Helper task to compute the expected background
+        """
         return self.normalized_area*self.expected_events
 
 """
-particleName = "Dplus"
+particleName = "D0"
 file_name = "./AO2D.root"
 file = uproot.open(file_name)
-
 # keys to access invariant mass plots
 branch, leaf_keys = get_keys(file, particleName)
 
-print(leaf_keys)
-
-# if there are several keys
-# we need to create an instance for each key
-expected_bkg = []
-expected_bkg_instance = []
-for key in leaf_keys:
-    data_handler = get_data_handler(file, branch, key)
-    expected_bkg.append(ExpectedBackground(data_handler).expected_background)
-print(expected_bkg)
-file.close()
+expected_bkg_list = []
+for leaf_key in leaf_keys:
+    key = branch + '/' + leaf_key
+    df = file[key].arrays(library='pd')
+    expected_bkg_list.append(ExpectedBackground(df).expected_background)
+# total expected background
+exp_bkg = sum(exp_bkg_list)
 """
