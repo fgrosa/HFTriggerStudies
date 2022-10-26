@@ -132,11 +132,19 @@ def plot_efficiency_vs_BDTscore(eff, channel, pt_bins, BDT_cuts, thresholds, pt_
     # choice of pt interval
     pt_min = pt_bin[0]
     pt_max = pt_bin[1]
-    for ilabel, label in enumerate(["Bkg", "Prompt", "Nonprompt"]):
+    # list filled with non-zero min and max of y axis values 
+    # to select a common y axis window for all the subplots
+    y_range = []
+    for label in ["Bkg", "Prompt", "Nonprompt"]:
+        for clas in ["Bkg", "Prompt", "Nonprompt"]:
+            y_range.append(min(i for i in eff[label][pt_bin][clas] if i!=0))
+            y_range.append(max(eff[label][pt_bin][clas]))
+    # plotting efficiencies
+    for label in ["Bkg", "Prompt", "Nonprompt"]:
         for iclas, clas in enumerate(["Bkg", "Prompt", "Nonprompt"]):
             plt.subplot(1, 3, iclas+1)
             plt.scatter(thresholds, eff[label][pt_bin][clas])
-            plt.ylim(0.00001,1.)
+            plt.ylim(min(y_range)/10, max(y_range)*10)
             plt.yscale('log')
             plt.xlabel("BDT score")
             if iclas == 0:
@@ -144,6 +152,7 @@ def plot_efficiency_vs_BDTscore(eff, channel, pt_bins, BDT_cuts, thresholds, pt_
             else:
                 plt.ylabel(f"Efficiency for {clas} for {pt_min} < pT < {pt_max} GeV/c (Bkg BDT < {BDT_cuts['Bkg']})")
         plt.legend(['Bkg', 'Prompt', 'Nonprompt'], loc="best")
+
     if save:
         plt.savefig(f"./{channel}_efficiency_vs_BDTscore_for_pt_in_{pt_min}_{pt_max}.png")
         plt.close("all")
@@ -153,12 +162,19 @@ def plot_efficiency_vs_pt(eff_at_BDT_cut, channel, pt_bins, BDT_cuts, save):
     plt.figure(f"{channel} BDT efficiencies vs pT", figsize=(16, 5))
     # configure binning for the plot
     bins_width, bins_mean = config_bins(pt_bins)
-
-    for ilabel, label in enumerate(["Bkg", "Prompt", "Nonprompt"]):
+    # list filled with non-zero min and max of y axis values 
+    # to select a common y axis window for all the subplots
+    y_range = []
+    for label in ["Bkg", "Prompt", "Nonprompt"]:
+        for clas in ["Bkg", "Prompt", "Nonprompt"]:
+            y_range.append(min(i for i in eff_at_BDT_cut[label][clas] if i!=0))
+            y_range.append(max(eff_at_BDT_cut[label][clas]))
+    # plotting efficiencies
+    for label in ["Bkg", "Prompt", "Nonprompt"]:
         for iclas, clas in enumerate(["Bkg", "Prompt", "Nonprompt"]):
             plt.subplot(1, 3, iclas+1)
             plt.errorbar(bins_mean, eff_at_BDT_cut[label][clas], xerr = bins_width, fmt = 'o', markersize=5, elinewidth = 2, capsize=4)
-            plt.ylim(0.001,1.)
+            plt.ylim(min(y_range)/10, max(y_range)*10)
             plt.yscale('log')
             plt.xlabel(r"$p_\mathrm{T}$ (GeV/$c$)")
             if iclas == 0:

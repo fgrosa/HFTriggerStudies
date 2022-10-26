@@ -12,6 +12,7 @@ import efficiency # module for total efficiencies computation
 import yield_fraction # module to get fprompt and fnonprompt
 from expected_signal import ExpectedSignal
 import expected_bkg
+import expected_signal_over_bkg
 
 def main(config):
     """
@@ -121,8 +122,19 @@ def main(config):
                 for exp_bkg in expected_bkg_list:
                     total_expected_bkg[pt_bin][clas][ithr] += exp_bkg[pt_bin][clas][ithr]
 
+    """
+    EXPECTED SIGNAL/BACKGROUND
+    """
+    s_over_b = expected_signal_over_bkg.ExpectedSignalOverBkg(expected_signal, total_expected_bkg, pt_bins, thresholds).s_over_b
+
+    if config["plot_options"]["expected_signal_over_bkg"]["plot"]:
+        save = config["plot_options"]["expected_signal_over_bkg"]["save"]
+        pt_bin = (config["pt_bin"][0], config["pt_bin"][1])
+        expected_signal_over_bkg.plot_s_over_b(s_over_b, channel, thresholds, pt_bin, save)
+    
+
     # show figures
-    #plt.show()
+    plt.show()
 
     # close files
     preselectionFile.close()

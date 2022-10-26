@@ -51,6 +51,11 @@ class ExpectedSignal:
         # choice of pt interval
         pt_min, pt_max = pt_bin[0], pt_bin[1]
         plt.figure(f"{channel} for {pt_min} < pT < {pt_max} (GeV/c)", figsize=(16, 10))
+        # list filled with non-zero min of y axis values 
+        # to select a common y axis window for all the subplots
+        y_range = []
+        for clas in ["Bkg", "Prompt", "Nonprompt"]:
+            y_range.append(min(i for i in self.expected_signal[pt_bin][clas] if i!=0))
         for iclas, clas in enumerate(['Bkg', 'Prompt', 'Nonprompt']*2):
             plt.subplot(2, 3, iclas+1)
             plt.xlabel(f"ML output {clas} BDT score")
@@ -59,7 +64,7 @@ class ExpectedSignal:
                 plt.scatter(self.thresholds, self.expected_signal[pt_bin][clas], label="Expected signal")
                 plt.plot(self.thresholds, Nev_list, color='r', label=r"$N_{ev}$")
                 #plt.ylabel("Expected signal")
-                plt.ylim(1, 5*Nev_list[0])
+                plt.ylim(min(y_range)/10, 5*Nev_list[0])
                 plt.yscale('log')
                 if iclas == 2: plt.legend(loc="best")
             else:

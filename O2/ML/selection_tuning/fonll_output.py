@@ -46,6 +46,7 @@ class FONLL_output:
         self.channel = channel
         self.pt_bins = pt_bins
         self.n_points = n_points
+        print("Init FONLL_output instance")
 
     @property
     def thresholds(self):
@@ -55,9 +56,9 @@ class FONLL_output:
         return 200 # pb^-1
     @property
     def cross_section(self):
-        mub_to_pb = 1.e-6 / 1e-12
-        sigma = 60 # mub
-        return sigma * mub_to_pb # pb
+        mb_to_pb = 1.e-3 / 1e-12
+        sigma = 60 # mb
+        return sigma * mb_to_pb # pb
     @property
     def number_of_events(self):
         return self.luminosity * self.cross_section

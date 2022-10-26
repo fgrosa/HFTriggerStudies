@@ -23,7 +23,7 @@ AO2D_file:
   particle_name: D0
 
 pt_bins: [1., 2., 3., 4., 5., 6., 7., 8., 10.]
-pt_bin: [1., 2.] # pt range selected for plots
+pt_bin: [4., 5.] # pt range selected for plots
 
 plot_options:
   preselection_efficiency: 
@@ -36,5 +36,8 @@ plot_options:
     plot: True
     save: False
   expected_signal:
+    plot: True
+    save: False
+  expected_signal_over_bkg:
     plot: True
     save: False

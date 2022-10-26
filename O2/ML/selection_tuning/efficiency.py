@@ -29,9 +29,9 @@ class TotalEfficiencies:
         """
         total_efficiencies = {}
         pt_mins, pt_maxs = self.pt_bins[:-1], self.pt_bins[1:]
-        for ipt, pt_bin in enumerate(zip(pt_mins, pt_maxs)):
+        for pt_bin in zip(pt_mins, pt_maxs):
             total_efficiencies[pt_bin] = {}
-            for iclas, clas in enumerate(['Bkg', 'Prompt', 'Nonprompt']):
+            for clas in ['Bkg', 'Prompt', 'Nonprompt']:
                 total_efficiencies[pt_bin][clas] = []
                 for ithr, _ in enumerate(self.thresholds):
                     total_efficiencies[pt_bin][clas].append([])
