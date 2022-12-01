@@ -1,0 +1,51 @@
+inputs:
+    dirname: input_data
+    filenames: [
+                 AnalysisResults_wiouBDT.root,
+                 AnalysisResults_withBDT.root
+                ]
+    charmhadron: ["D0", "Dplus", "Ds", "Lc", "DStar"]
+    beautyhadron: ["B0", "Bplus", "Bs", "Lb", "B0toDStar" ]
+
+output: 
+    filename: HF_event_filter
+
+options:
+    colors: [ kAzure+4, kRed+1 ]
+    markers: [kFullCircle, kFullCircle]
+    markersize: 1
+    linewidth: 2
+    fillstyle: [1, 1]
+    
+    legend:
+        avoid: false #set true to avoid the legend in the final plot
+        xlimits: [0.35, 0.7]
+        ylimits: [0.75, 0.90]
+        header: 'Run3 Simulation: MB production'
+        titles: ['w/o BDT', 'w/  BDT']
+        options: [lp, lp]
+        textsize: 0.04
+        ncolumns: 1
+        
+    canvas:
+        width: 1200
+        heigth: 800
+   
+    histos:
+        #xaxistitle_c: ["D^{0}", "D^{+}", "D_{s}^{+}", "#Lambda_{c}^{+}", "D^{*}"]
+        xaxistitle_c: ["#it{M}(K#pi) GeV/#it{c}^{2}", "#it{M}(K#pi#pi) GeV/#it{c}^{2}", "#it{M}(KK#pi) GeV/#it{c}^{2}", "#it{M}(pK#pi) GeV/#it{c}^{2}", "#it{M}(K#pi#pi) GeV/#it{c}^{2}"]
+        #xaxistitle_b: ["B^{0}", "B^{+}", "B_{s}^{+}", "#Lambda_{b}^{+}", "B^{0}(#leftarrow D^{*})"]
+        xaxistitle_b: ["#it{M}(D^{0}#pi) GeV/#it{c}^{2}", "#it{M}(D^{*}#pi) GeV/#it{c}^{2}", "#it{M}(D_{s}^{+}#pi) GeV/#it{c}^{2}", "#it{M}(#Lambda_{c}^{+}#pi) GeV/#it{c}^{2}", "#it{M}(B^{0}(#leftarrow D^{*}))GeV/#it{c}^{2}"]
+        xaxistitle_hightpt: "#it{p}_{T} GeV/#it{c}"
+        xaxistitle_kstar: "#it{k}^{*} GeV/#it{c}"
+
+        yaxistitle: ['Counts per event / 1 MeV/#it{c}^{2}', 'Counts per event / 1 MeV/#it{c}^{2}', 'Counts per event / 1 MeV/#it{c}^{2}', 'Counts per event / 1 MeV/#it{c}^{2}', 'Counts per event / 1 MeV/#it{c}^{2}']
+        xLimitslow_c: [1.7, 1.75 ,1.75, 2.15, 2.005]
+        xLimitshigh_c: [2.05, 1.945, 2.05, 2.4, 2.05]
+        xLimitslow_b: [5, 5 ,5.05, 5.3, 5]
+        xLimitshigh_b: [5.5, 5.5, 5.5, 5.9, 5.5]
+        ptlow: [0, 0 ,0, 0]
+        pthigh: [50, 50, 50, 50]
+        kstarlow: [0, 0 ,0, 0]
+        kstarhigh: [1, 1, 1, 1]
+
