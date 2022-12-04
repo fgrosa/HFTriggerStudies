@@ -18,19 +18,26 @@ FONLL_output:
   file: /home/abigot/Documents/ALICE/HFFilter/Efficiency/BDT_applied/DmesonLcPredictions_13TeV_y05_FFptDepLHCb_BRPDG_PDG2020_PromptLcMod.root
   channel: D0Kpi # check channel syntax in the file
 
+AO2D_file:
+  file: /home/abigot/Documents/HFTriggerStudies/O2/ML/selection_tuning/AO2D.root
+  particle_name: D0
+
 pt_bins: [1., 2., 3., 4., 5., 6., 7., 8., 10.]
-pt_bin: [1., 2.] # pt range selected for plots
+pt_bin: [4., 5.] # pt range selected for plots
 
 plot_options:
   preselection_efficiency: 
     plot: True
-    save: True
+    save: False
   BDT_efficiency_vs_BDTscore:
     plot: True
-    save: True
+    save: False
   BDT_efficiency_vs_pt:
     plot: True
-    save: True
+    save: False
   expected_signal:
     plot: True
-    save: True
+    save: False
+  expected_signal_over_bkg:
+    plot: True
+    save: False
