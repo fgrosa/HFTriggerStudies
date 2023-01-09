@@ -1,0 +1,63 @@
+input: training_samples/LHC21k6/40578
+
+default_selections:
+    Dzero:
+        bdt_background: 0.1
+        bdt_prompt: 0.4
+        bdt_nonprompt: 0.6
+        minpt: 1.
+        minpt_highpt: 8.
+        minpt_doublecharm: 1.
+        dca_beauty: 0.0020
+        kstar: 0.8
+    Dplus:
+        bdt_background: 0.1
+        bdt_prompt: 0.4
+        bdt_nonprompt: 0.5
+        minpt: 1.
+        minpt_highpt: 8.
+        minpt_doublecharm: 1.
+        dca_beauty: 0.0020
+        kstar: 0.8
+    Ds:
+        bdt_background: 0.1
+        bdt_prompt: 0.4
+        bdt_nonprompt: 0.6
+        minpt: 1.
+        minpt_highpt: 8.
+        minpt_doublecharm: 1.
+        dca_beauty: 0.0020
+        kstar: 0.8
+    Lc:
+        bdt_background: 0.15
+        bdt_prompt: 0.2
+        bdt_nonprompt: 0.8
+        minpt: 2.
+        minpt_highpt: 10.
+        minpt_doublecharm: 2.
+        dca_beauty: 0.0020
+        kstar: 0.8
+
+highpt:
+    active: False
+    pt_to_test: [5, 6, 7, 8]
+
+beauty:
+    active: False
+    dca_to_test: [0.0000, 0.0010, 0.0020, 0.0030] # dca of bachelor
+    pt_to_test: [1, 2] # pt of charm hadron
+
+femto:
+    active: False
+    kstar_to_test: [0.6, 0.8, 1.0, 1.2]
+    pt_to_test: [1, 2] # pt of charm hadron
+
+doublecharm:
+    active: False # very slow
+    Dzero_pt_to_test: [1., 2., 4.]
+    Dplus_pt_to_test: [1., 2., 4.]
+    Ds_pt_to_test: [1., 2., 4.]
+    Lc_pt_to_test: [1., 2., 4.]
+
+output:
+    dir: "."
