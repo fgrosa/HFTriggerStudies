@@ -20,6 +20,7 @@ ml:
   roc_auc_approach: ovo
   roc_auc_average: macro
   training_vars: [fPT1, fDCAPrimXY1, fDCAPrimZ1, fPT2, fDCAPrimXY2, fDCAPrimZ2, fPT3, fDCAPrimXY3, fDCAPrimZ3]
+  #training_vars: [fPT1, fDCAPrimXY1_SMEAR, fDCAPrimZ1_SMEAR, fPT2, fDCAPrimXY2_SMEAR, fDCAPrimZ2_SMEAR, fPT3, fDCAPrimXY3_SMEAR, fDCAPrimZ3_SMEAR]# if use smearing DCA
   hyper_pars: {'max_depth':2, 'learning_rate':0.08399178648090457, 'n_estimators':1060, 'min_child_weight':6, 'n_jobs':4, 'tree_method':hist, 'subsample': 0.9548377633742259, 'colsample_bytree': 0.8551028604882291}
   hyper_pars_opt:
     activate: false
