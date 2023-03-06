@@ -4,9 +4,12 @@ training of ML models to be used in the HF triggers
 """
 
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 import argparse
 import uproot
 from alive_progress import alive_bar
+from ROOT import TFile, gRandom
 
 # bits for 3 prongs
 bits_3p = {"DplusToPiKPi": 0,
@@ -18,6 +21,70 @@ channels_3p = {"DplusToPiKPi": 1,
                "DsToKKPi": 2,
                "LcToPKPi": 3,
                "XicToPKPi": 4}
+
+
+def do_dca_smearing(df, nProng=None):
+    """
+    Method to do the DCA smearing for 2 prongs and 3 prongs
+
+    Parameters
+    -----------------
+    - df: pandas dataframe containing all candidates with fFlagOrigin column
+    - nProng: option to 2 prongs or 3 prongs
+
+    Outputs
+    -----------------
+    - df: New dataframe with the smeared DCA columns
+    """
+    
+    print("Start to do the smearing")
+    # Open the input files
+    file_names = ["sigmaDcaXY_LHC22q_pass2_LHCC.root", "sigmaDcaZ_LHC22q_pass2_LHCC.root"]
+    input_files = [TFile.Open(name) for name in file_names]
+    
+    # Extract DCA resolution histograms
+    dca_reso_data,  dca_reso_mc= {}, {}
+    for i, par in enumerate(["XY", "Z"]):
+        gDca = input_files[i].Get("can")
+        dca_reso_data[par] = gDca.GetPrimitive(f"tge_DCA_res_withPVrefit_all_DATA")
+        dca_reso_mc[par] = gDca.GetPrimitive(f"tge_DCA_res_withPVrefit_all_MC")
+
+    # Add smeared DCA columns to the dataframe
+    smear_cols = ["XY1", "XY2", "Z1", "Z2"]
+    if nProng == 3:
+        smear_cols.extend(["XY3", "Z3"])
+    for col in smear_cols:
+        dca_col = f"fDCAPrim{col}"
+        pt_col = f"fPT{col[-1]}"
+        df[f"{dca_col}_SMEAR"] = [
+            gRandom.Gaus(dca, np.sqrt(dca_reso_data[col[:-1]].Eval(pt)**2 - dca_reso_mc[col[:-1]].Eval(pt)**2) * 1e-4)
+            for dca, pt in zip(df[dca_col], df[pt_col])
+        ]
+    
+    # Close the input files
+    for file in input_files:
+        file.Close()
+
+    # Make a figure comparing the DCA variables before and after smearing
+    num_cols = len(smear_cols)
+    num_rows = num_cols // 2 + num_cols % 2
+    fig, axs = plt.subplots(num_rows, 2, figsize=(10, 8))
+    axs = axs.flatten()
+    
+    for i, col in enumerate(smear_cols):
+        dca_col = f"fDCAPrim{col}"
+        smear_col = f"{dca_col}_SMEAR"
+        axs[i].hist(df[dca_col], bins=100, alpha=0.5, label="Before Smearing")
+        axs[i].hist(df[smear_col], bins=100, alpha=0.5, label="After Smearing")
+        axs[i].set_xlabel(col)
+        axs[i].set_xlim(-1, 1)
+        axs[i].set_yscale('log')
+        axs[i].legend()
+
+    plt.tight_layout()
+    plt.savefig(f"dca_comparison_{nProng}prong.png")
+    #plt.show()
+    return df
 
 
 def divide_df_for_origin(df, cols_to_remove=None, channel=None):
@@ -103,6 +170,8 @@ def main(input_dir, max_files=1000, downscale_bkg=1., force=False):
                     if "O2hftrigtrain2p" in tree_name:
                         list_of_2p_df.append(f"{file}:{tree_name}")
                 df_2p = uproot.concatenate(list_of_2p_df, library="pd")
+                if args.dosmearing:
+                    df_2p = do_dca_smearing(df_2p, 2)
 
                 df_2p_prompt, df_2p_nonprompt, df_2p_bkg = divide_df_for_origin(
                     df_2p)
@@ -136,6 +205,8 @@ def main(input_dir, max_files=1000, downscale_bkg=1., force=False):
                     if "O2hftrigtrain3p" in tree_name:
                         list_of_3p_df.append(f"{file}:{tree_name}")
                 df_3p = uproot.concatenate(list_of_3p_df, library="pd")
+                if args.dosmearing:
+                    df_3p = do_dca_smearing(df_3p, 3)
 
                 for channel_3p in bits_3p:
                     flags = df_3p["fHFSelBit"].astype(
@@ -178,6 +249,8 @@ if __name__ == "__main__":
                         help="fraction of bkg to be kept")
     parser.add_argument("--force", action="store_true", default=False,
                         help="force re-creation of output files")
+    parser.add_argument("--dosmearing", action="store_true", default=False,
+                        help="do smearing on the dca of daughter tracks ")
     args = parser.parse_args()
 
     main(args.input_dir, args.max_files, args.downscale_bkg, args.force)
