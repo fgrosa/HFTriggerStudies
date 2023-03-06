@@ -4,6 +4,8 @@ training of ML models to be used in the HF triggers
 """
 
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 import argparse
 import uproot
 from alive_progress import alive_bar
@@ -41,11 +43,12 @@ def do_dca_smearing(df, nProng=None):
     input_files = [TFile.Open(name) for name in file_names]
     
     # Extract DCA resolution histograms
-    dca_reso = {}
+    dca_reso_data,  dca_reso_mc= {}, {}
     for i, par in enumerate(["XY", "Z"]):
         gDca = input_files[i].Get("can")
-        dca_reso[par] = gDca.GetPrimitive(f"tge_DCA_res_withPVrefit_all")
-    
+        dca_reso_data[par] = gDca.GetPrimitive(f"tge_DCA_res_withPVrefit_all_DATA")
+        dca_reso_mc[par] = gDca.GetPrimitive(f"tge_DCA_res_withPVrefit_all_MC")
+
     # Add smeared DCA columns to the dataframe
     smear_cols = ["XY1", "XY2", "Z1", "Z2"]
     if nProng == 3:
@@ -54,7 +57,7 @@ def do_dca_smearing(df, nProng=None):
         dca_col = f"fDCAPrim{col}"
         pt_col = f"fPT{col[-1]}"
         df[f"{dca_col}_SMEAR"] = [
-            gRandom.Gaus(dca, dca_reso[col[:-1]].Eval(pt) * 1e-4)
+            gRandom.Gaus(dca, np.sqrt(dca_reso_data[col[:-1]].Eval(pt)**2 - dca_reso_mc[col[:-1]].Eval(pt)**2) * 1e-4)
             for dca, pt in zip(df[dca_col], df[pt_col])
         ]
     
@@ -62,6 +65,25 @@ def do_dca_smearing(df, nProng=None):
     for file in input_files:
         file.Close()
 
+    # Make a figure comparing the DCA variables before and after smearing
+    num_cols = len(smear_cols)
+    num_rows = num_cols // 2 + num_cols % 2
+    fig, axs = plt.subplots(num_rows, 2, figsize=(10, 8))
+    axs = axs.flatten()
+    
+    for i, col in enumerate(smear_cols):
+        dca_col = f"fDCAPrim{col}"
+        smear_col = f"{dca_col}_SMEAR"
+        axs[i].hist(df[dca_col], bins=100, alpha=0.5, label="Before Smearing")
+        axs[i].hist(df[smear_col], bins=100, alpha=0.5, label="After Smearing")
+        axs[i].set_xlabel(col)
+        axs[i].set_xlim(-1, 1)
+        axs[i].set_yscale('log')
+        axs[i].legend()
+
+    plt.tight_layout()
+    plt.savefig(f"dca_comparison_{nProng}prong.png")
+    #plt.show()
     return df
 
 
