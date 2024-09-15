@@ -43,9 +43,9 @@ def get_pt_bins_correspondance(self, X_pt_bins):
     idx_min_list, idx_max_list = [], []
     pt_mins, pt_maxs = self.pt_bins[:-1], self.pt_bins[1:]
     bin_width = X_pt_bins[1] - X_pt_bins[0]
-    for ipt, (pt_min, pt_max) in enumerate(zip(pt_mins, pt_maxs)):
+    for (pt_min, pt_max) in zip(pt_mins, pt_maxs):
         idx_min, = np.where( ((X_pt_bins >= pt_min - 0.1*bin_width) & (X_pt_bins <= pt_min + 0.1*bin_width)))
-        idx_max, =  np.where( ((X_pt_bins >= pt_max - 0.1*bin_width) & (X_pt_bins <= pt_max + 0.1*bin_width)))
+        idx_max, = np.where( ((X_pt_bins >= pt_max - 0.1*bin_width) & (X_pt_bins <= pt_max + 0.1*bin_width)))
         idx_min_list.append(idx_min[0])
         idx_max_list.append(idx_max[0])
     return idx_min_list, idx_max_list
@@ -80,6 +80,7 @@ class Preselection:
         for name in self.particles_dico:
             if name in channel:
                 self.particleName = name
+        print('Init Preselection instance')
     @property
     def rec_key(self):
         return get_rec_keys(self, self.tree_mc_rec.keys())
@@ -131,14 +132,14 @@ class Preselection:
     def efficiencies_dico(self):
         pt_mins, pt_maxs = self.pt_bins[:-1], self.pt_bins[1:]
         efficiencies = {}
-        for ipt, pt_bin in enumerate(zip(pt_mins, pt_maxs)):
+        for pt_bin in zip(pt_mins, pt_maxs):
             efficiencies[pt_bin] = self.rec_yield[pt_bin] / self.gen_yield[pt_bin]
         return efficiencies
     @property
     def efficiencies_array(self):
         pt_mins, pt_maxs = self.pt_bins[:-1], self.pt_bins[1:]
         efficiencies = []
-        for ipt, pt_bin in enumerate(zip(pt_mins, pt_maxs)):
+        for pt_bin in zip(pt_mins, pt_maxs):
             efficiencies.append(self.rec_yield[pt_bin] / self.gen_yield[pt_bin])
         return efficiencies
 
