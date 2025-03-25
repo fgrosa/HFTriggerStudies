@@ -5,10 +5,10 @@ Script for the training of ML models to be used in HF triggers
 import os
 import sys
 import argparse
+import pickle
 import numpy as np
 import pandas as pd
 import xgboost as xgb
-import pickle
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import yaml
@@ -17,27 +17,6 @@ from hipe4ml import plot_utils
 from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
 from hipe4ml_converter.h4ml_converter import H4MLConverter
-
-
-def is_selected_massKK(cand, mass_cut):
-    """
-    Function that returns True if the mass of the KK is in the selected mass range
-    """
-    if cand["fDeltaMassKKFirst"] < mass_cut or cand["fDeltaMassKKSecond"] < mass_cut:
-        return 1
-    else:
-        return 0
-
-
-def is_selected_proton_pid(cand, nsigma_tpc, nsigma_tof):
-    """
-    Function that returns True if the proton PID is in the selected range
-    """
-    if (cand["fNsigmaPrTPC1"] < nsigma_tpc and (cand["fNsigmaPrTOF1"] < nsigma_tof or cand["fNsigmaPrTOF1"] == np.nan)) \
-            or (cand["fNsigmaPrTPC3"] < nsigma_tpc and (cand["fNsigmaPrTOF3"] < nsigma_tof or cand["fNsigmaPrTOF3"] == np.nan)):
-        return 1
-    else:
-        return 0
 
 
 def get_list_input_files(indirs, channel):
@@ -102,6 +81,7 @@ def data_prep(config):
     seed_split = config["data_prep"]["seed_split"]
     out_dir = config["output"]["directory"]
     training_vars = config["ml"]["training_vars"]
+    plot_vars = config["ml"]["plot_vars"]
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
 
@@ -114,31 +94,6 @@ def data_prep(config):
     df_prompt = hdl_prompt.get_data_frame()
     df_nonprompt = hdl_nonprompt.get_data_frame()
     df_bkg = hdl_bkg.get_data_frame()
-
-    if config["data_prep"]["preselection"]["enable"]:
-        if channel in ["D0ToKPi", "DPlusToPiKPi"]:
-            print("\nWARNING: No preselection for D0 and D+ to be applied, skip it\n")
-        else:
-            if channel == "DsToKKPi":
-                mass_cut = config["data_prep"]["preselection"]["delta_mass_kk"]
-                df_prompt["fIsSel"] = df_prompt.apply(
-                    lambda row: is_selected_massKK(row, mass_cut), axis=1)
-                df_nonprompt["fIsSel"] = df_nonprompt.apply(
-                    lambda row: is_selected_massKK(row, mass_cut), axis=1)
-                df_bkg["fIsSel"] = df_bkg.apply(
-                    lambda row: is_selected_massKK(row, mass_cut), axis=1)
-            elif channel in ["LcToPKPi", "XicToPKPi"]:
-                nsigma_tpc = config["data_prep"]["preselection"]["nsigma_tpc_proton"]
-                nsigma_tof = config["data_prep"]["preselection"]["nsigma_tof_proton"]
-                df_prompt["fIsSel"] = df_prompt.apply(
-                    lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
-                df_nonprompt["fIsSel"] = df_nonprompt.apply(
-                    lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
-                df_bkg["fIsSel"] = df_bkg.apply(
-                    lambda row: is_selected_proton_pid(row, nsigma_tpc, nsigma_tof), axis=1)
-            df_prompt = df_prompt.query("fIsSel > 0.5")
-            df_nonprompt = df_nonprompt.query("fIsSel > 0.5")
-            df_bkg = df_bkg.query("fIsSel > 0.5")
 
     use_pid = False
     for var in training_vars:
@@ -184,6 +139,9 @@ def data_prep(config):
         train_set, test_set, y_train, y_test = train_test_split(
             df_tot, labels_array, test_size=test_f, random_state=seed_split
         )
+    else:
+        print("ERROR: set the test fraction to a number between 0 and 1")
+        sys.exit()
 
     train_test_data = [train_set, y_train, test_set, y_test]
     del df_tot
@@ -192,7 +150,7 @@ def data_prep(config):
     leg_labels = ["bkg", "prompt", "nonprompt"]
 
     # _____________________________________________
-    plot_utils.plot_distr(df_list, training_vars, 100, leg_labels,
+    plot_utils.plot_distr(df_list, plot_vars, 100, leg_labels,
                           figsize=(12, 7), alpha=0.3, log=True, grid=False, density=True)
     plt.subplots_adjust(left=0.06, bottom=0.06, right=0.99,
                         top=0.96, hspace=0.55, wspace=0.55)
@@ -233,11 +191,11 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
     if config["ml"]["hyper_pars_opt"]["activate"]:
         model_hdl.optimize_params_optuna(
             train_test_data,
-            cfg["ml"]["hyper_pars_opt"]["hyper_par_ranges"],
+            config["ml"]["hyper_pars_opt"]["hyper_par_ranges"],
             cross_val_scoring="roc_auc_ovo",
-            timeout=cfg['ml']['hyper_pars_opt']['timeout'],
-            n_jobs=cfg['ml']['hyper_pars_opt']['njobs'],
-            n_trials=cfg['ml']['hyper_pars_opt']['ntrials'],
+            timeout=config['ml']['hyper_pars_opt']['timeout'],
+            n_jobs=config['ml']['hyper_pars_opt']['njobs'],
+            n_trials=config['ml']['hyper_pars_opt']['ntrials'],
             direction='maximize'
         )
     else:
@@ -257,7 +215,7 @@ def train(config, train_test_data):  # pylint: disable=too-many-locals
 
     test_set_df = train_test_data[2]
     test_set_df = test_set_df.loc[:, df_column_to_save_list]
-    test_set_df[f'Labels'] = train_test_data[3]
+    test_set_df['Labels'] = train_test_data[3]
 
     for pred, lab in enumerate(output_labels):
         test_set_df[f'ML_output_{lab}'] = y_pred_test[:, pred]

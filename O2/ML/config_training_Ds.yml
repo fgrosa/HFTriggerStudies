@@ -1,17 +1,12 @@
 data_prep:
   dirs:
-    Prompt: [training_samples/LHC22b1b/31003, training_samples/LHC22b1a/31002]
-    Nonprompt: [training_samples/LHC22b1a/31002, training_samples/LHC22b1b/31003]
-    Bkg: [training_samples/LHC21k6/31202]
+    Prompt: [AO2D]
+    Nonprompt: [AO2D]
+    Bkg: [AO2D]
   channel: DsToKKPi  # options: D0ToKPi, DplusToPiKPi, DsToKKPi, LcToPKPi, XicToPKPi
-  preselection:
-    enable: true # preselection possible only for Ds and baryons
-    nsigma_tpc_proton: 3 # nsigma cut for proton
-    nsigma_tof_proton: 3 # nsigma cut for proton
-    delta_mass_kk: 0.020 # mass difference between KK and phi in GeV/c2
   class_balance:
-    share: all_signal # options: equal, all_signal
-    bkg_factor: 1 # factor to be applied to bkg sample compared to signal sample (only for share=all_signal)
+    share: equal # options: equal, all_signal
+    bkg_factor: 3 # factor to be applied to bkg sample compared to signal sample (only for share=all_signal)
   test_fraction: 0.5
   seed_split: 42
 
@@ -20,12 +15,12 @@ ml:
   roc_auc_approach: ovo
   roc_auc_average: macro
   training_vars: [fPT1, fDCAPrimXY1, fDCAPrimZ1, fPT2, fDCAPrimXY2, fDCAPrimZ2, fPT3, fDCAPrimXY3, fDCAPrimZ3]
-  #training_vars: [fPT1, fDCAPrimXY1_SMEAR, fDCAPrimZ1_SMEAR, fPT2, fDCAPrimXY2_SMEAR, fDCAPrimZ2_SMEAR, fPT3, fDCAPrimXY3_SMEAR, fDCAPrimZ3_SMEAR]# if use smearing DCA
+  plot_vars:  [fInvMassDsToKKPi, fInvMassDsToPiKK, fDeltaMassKKFirst, fDeltaMassKKSecond, fPT3Prong, fNsigmaKaTPC2, fNsigmaKaTOF2, fPT1, fDCAPrimXY1, fDCAPrimZ1, fPT2, fDCAPrimXY2, fDCAPrimZ2, fPT3, fDCAPrimXY3, fDCAPrimZ3]
 
   hyper_pars: {'max_depth': 4, 'learning_rate': 0.09849808014809752, 'n_estimators': 1198, 'min_child_weight': 7, 'n_jobs': 4,
                'tree_method': 'hist', 'subsample': 0.8012697244903896, 'colsample_bytree': 0.9309143772778852}
   hyper_pars_opt:
-    activate: true
+    activate: false
     ntrials: 25
     njobs: 4
     timeout: 3600

@@ -1,0 +1,13 @@
+preselection:
+  enable: true
+  nsigma_tpc_proton: 3 # nsigma cut for proton
+  nsigma_tof_proton: 3 # nsigma cut for proton
+  nsigma_tpc_kaon_3prong: 3 # nsigma cut for kaon (all 3 prongs)
+  nsigma_tof_kaon_3prong: 3 # nsigma cut for kaon (all 3 prongs)
+  nsigma_tpc_kaonpion_d0: 3 # nsigma cut for kaon and pion (D0 only)
+  nsigma_tof_kaonpion_d0: 3 # nsigma cut for kaon and pion (D0 only)
+  delta_mass_kk: 0.020 # mass difference between KK and phi in GeV/c2
+  dcaz: 1000 # max DCAz for all daughters (in absolute value)
+
+require_good_coll: true # require good collision for signal only
+bkg_from_data: true # bkg from data or MC
